@@ -17,10 +17,13 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Install dependencies
         run: pnpm install
-        # もしCI環境にpnpmがない場合は下記を先に実行
-        # run: npm install -g pnpm && pnpm install
 
       - name: Run Biome check
         run: pnpm biome check .
