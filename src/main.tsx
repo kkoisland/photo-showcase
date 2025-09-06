@@ -7,11 +7,11 @@ import App from "./App.tsx";
 const root = document.getElementById("root") as HTMLElement;
 
 createRoot(root).render(
-  <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/*" element={<App />} />
-      </Routes>
-    </BrowserRouter>
-  </StrictMode>
+	<StrictMode>
+		<BrowserRouter>
+			<Routes>
+				<Route path="/*" element={<App />} />
+			</Routes>
+		</BrowserRouter>
+	</StrictMode>,
 );
