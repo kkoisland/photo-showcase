@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import type { SortKey, SortOrder, UIState } from "../types/ui";
-import { initialUIState } from "../types/ui";
+import type { SortKey, SortOrder, UIState } from "../types";
+import { initialUIState } from "../types";
 
 interface UIStore extends UIState {
   setSelectedAlbum: (id: string | null) => void;

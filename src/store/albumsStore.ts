@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Album } from "../types/photo";
+import type { Album } from "../types";
 
 interface AlbumsState {
   albums: Album[];
