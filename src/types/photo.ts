@@ -4,6 +4,7 @@ export interface Photo {
   url: string;
   description?: string;
   createdAt?: string;
+  favorite?: boolean;
 }
 
 export interface Album {
