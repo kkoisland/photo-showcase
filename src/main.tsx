@@ -9,11 +9,11 @@ if (!container) throw new Error("Root element not found");
 const root = createRoot(container);
 
 root.render(
-  <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/*" element={<App />} />
-      </Routes>
-    </BrowserRouter>
-  </StrictMode>
+	<StrictMode>
+		<BrowserRouter>
+			<Routes>
+				<Route path="/*" element={<App />} />
+			</Routes>
+		</BrowserRouter>
+	</StrictMode>,
 );
