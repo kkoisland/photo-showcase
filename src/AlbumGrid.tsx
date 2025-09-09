@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import ImportDialog from "./components/ImportDialog";
 import { useAlbumsStore } from "./store/albumsStore";
 
 const AlbumGrid = () => {
@@ -6,6 +7,7 @@ const AlbumGrid = () => {
 	return (
 		<div style={{ padding: 20 }}>
 			<h1>Albums</h1>
+			<ImportDialog />
 			<ul
 				style={{
 					display: "grid",

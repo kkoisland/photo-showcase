@@ -28,6 +28,7 @@ export type SortKey = "title" | "createdAt";
 export type SortOrder = "asc" | "desc";
 
 export interface UIState {
+	photos: Photo[];
 	selectedAlbumId: string | null;
 	query: string;
 	tag: string | null;
@@ -37,6 +38,7 @@ export interface UIState {
 }
 
 export const initialUIState: UIState = {
+	photos: [],
 	selectedAlbumId: null,
 	query: "",
 	tag: null,
