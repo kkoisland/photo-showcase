@@ -12,6 +12,12 @@ interface UIStore extends UIState {
 	reset: () => void;
 	replaceAll: (photos: Photo[]) => void;
 	mergeById: (photos: Photo[]) => void;
+	showSnackbar: (
+		message: string,
+		actionLabel?: string,
+		action?: () => void,
+	) => void;
+	hideSnackbar: () => void;
 }
 
 export const useUIStore = create<UIStore>((set, get) => ({
@@ -32,4 +38,17 @@ export const useUIStore = create<UIStore>((set, get) => ({
 		];
 		set({ photos: merged });
 	},
+	showSnackbar: (message, actionLabel, action) =>
+		set({
+			snackbar: { isOpen: true, message, actionLabel, action },
+		}),
+	hideSnackbar: () =>
+		set({
+			snackbar: {
+				isOpen: false,
+				message: "",
+				actionLabel: undefined,
+				action: undefined,
+			},
+		}),
 }));
