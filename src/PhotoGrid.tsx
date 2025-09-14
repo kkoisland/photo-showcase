@@ -1,6 +1,5 @@
-// PhotoGrid.tsx 修正版
-
 import { useMemo } from "react";
+import Masonry from "react-masonry-css";
 import { Link, useParams } from "react-router-dom";
 import { usePhotosStore } from "./store/photosStore";
 
@@ -12,26 +11,27 @@ const PhotoGrid = () => {
 		[allPhotos, albumId],
 	);
 
+	const breakpointColumnsObj = {
+		default: 4,
+		1100: 3,
+		700: 2,
+		500: 1,
+	};
+
 	return (
 		<div style={{ padding: 20 }}>
 			<h1>Photos in Album {albumId}</h1>
-			<div
-				style={{
-					display: "grid",
-					gap: 12,
-					gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-				}}
+			<Masonry
+				breakpointCols={breakpointColumnsObj}
+				className="my-masonry-grid"
+				columnClassName="my-masonry-grid_column"
 			>
 				{photos.map((p) => (
 					<Link key={p.id} to={`/photos/${p.id}`}>
-						<img
-							src={p.url}
-							alt={p.title}
-							style={{ width: "100%", borderRadius: 8 }}
-						/>
+						<img src={p.url} alt={p.title} style={{ width: "100%" }} />
 					</Link>
 				))}
-			</div>
+			</Masonry>
 			<div style={{ marginTop: 20 }}>
 				<Link to="/">← Back to Albums</Link>
 			</div>
