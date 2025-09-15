@@ -8,19 +8,58 @@ const AlbumGrid = () => {
 		<div style={{ padding: 20 }}>
 			<h1>Albums</h1>
 			<ImportDialog />
-			<ul
+			<div
 				style={{
 					display: "grid",
-					gap: "12px",
-					gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+					gap: 12,
+					gridTemplateColumns: "repeat(auto-fill, minmax(221px, auto))",
 				}}
 			>
 				{albums.map((a) => (
-					<li key={a.id} style={{ padding: 10 }}>
-						<Link to={`/albums/${a.id}`}>{a.title}</Link>
-					</li>
+					<Link key={a.id} to={`/albums/${a.id}`}>
+						{a.title}
+						<div
+							key={a.id}
+							style={{
+								padding: 12,
+								border: "1px solid #ddd",
+								borderRadius: 8,
+								background: "#fafafa",
+							}}
+						>
+							{a.coverUrl && (
+								<img
+									src={a.coverUrl}
+									alt={a.title}
+									style={{
+										width: 221,
+										height: 221,
+										objectFit: "cover",
+										borderRadius: 8,
+										marginBottom: 8,
+									}}
+								/>
+							)}
+							<div
+								style={{
+									display: "flex",
+									justifyContent: "space-between",
+									alignItems: "center",
+									fontSize: "0.9em",
+									opacity: 0.8,
+									marginBottom: 4,
+								}}
+							>
+								<span>
+									{a.photos?.length ?? 0} 個のファイル
+									{a.shared ? " ・ 共有中" : ""}
+								</span>
+							</div>
+							<div style={{ fontWeight: "bold" }}>{a.title}</div>
+						</div>
+					</Link>
 				))}
-			</ul>
+			</div>
 		</div>
 	);
 };

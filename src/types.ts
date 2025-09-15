@@ -17,6 +17,8 @@ export interface Album {
 	shared?: boolean;
 	updatedAt?: string;
 	createdAt: string;
+	startDate?: string;
+	endDate?: string;
 }
 
 export interface LightboxState {
