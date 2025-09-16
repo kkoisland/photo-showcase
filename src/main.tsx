@@ -11,7 +11,7 @@ import { usePhotosStore } from "./store/photosStore";
 useAlbumsStore.getState().setAlbums([
 	{
 		id: "a1",
-		title: "Test Album1",
+		title: "Test Album1 Test Album1 Test Album1 Test Album1 Test Album1",
 		coverUrl: "https://picsum.photos/300/200",
 		createdAt: "",
 		photos: [],
