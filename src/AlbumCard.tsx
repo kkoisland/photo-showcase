@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import AlbumDateEditor from "./components/AlbumDateEditor";
+import { useAlbumsStore } from "./store/albumsStore";
 import type { Album } from "./types";
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 
 const AlbumCard = ({ album }: Props) => {
 	const [isOpen, setIsOpen] = useState(false);
+	const updateAlbum = useAlbumsStore((s) => s.updateAlbum);
 
 	return (
 		<>
@@ -61,10 +63,26 @@ const AlbumCard = ({ album }: Props) => {
 							fontSize: "0.9em",
 						}}
 					>
-						<span>
-							{album.photos?.length ?? 0} 個のファイル
-							{album.shared ? " ・ 共有中" : ""}
-						</span>
+						<div className="flex items-center text-sm opacity-80 mb-2">
+							<span>{album.photos?.length ?? 0} 個のファイル</span>
+							<button
+								type="button"
+								onClick={(e) => {
+									e.preventDefault();
+									if (album.shared) {
+										// 共有中 → リンクを表示（後でSnackbarへ置き換え）
+										alert(`共有リンク: https://example.com/albums/${album.id}`);
+									} else {
+										updateAlbum({ ...album, shared: true });
+										alert("このアルバムを共有しました");
+									}
+									// TODO: Snackbar実装時に置き換える（Copyボタン＋外側クリックで閉じる）
+								}}
+								className="underline text-blue-600"
+							>
+								{album.shared ? "共有中" : "共有なし"}
+							</button>
+						</div>
 					</div>
 				</div>
 			</Link>
