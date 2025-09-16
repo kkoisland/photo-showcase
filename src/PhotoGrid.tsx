@@ -32,9 +32,6 @@ const PhotoGrid = () => {
 					</Link>
 				))}
 			</Masonry>
-			<div style={{ marginTop: 20 }}>
-				<Link to="/">← Back to Albums</Link>
-			</div>
 		</div>
 	);
 };
