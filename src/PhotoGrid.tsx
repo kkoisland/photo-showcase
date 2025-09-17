@@ -1,11 +1,13 @@
 import { useMemo } from "react";
 import Masonry from "react-masonry-css";
 import { Link, useParams } from "react-router-dom";
+import { useAlbumsStore } from "./store/albumsStore";
 import { usePhotosStore } from "./store/photosStore";
 
 const PhotoGrid = () => {
 	const { albumId } = useParams<{ albumId: string }>();
 	const allPhotos = usePhotosStore((s) => s.photos);
+	const album = useAlbumsStore((s) => s.albums.find((a) => a.id === albumId));
 	const photos = useMemo(() => {
 		return allPhotos
 			.filter((p) => p.albumId === albumId)
@@ -21,7 +23,9 @@ const PhotoGrid = () => {
 
 	return (
 		<div style={{ padding: 20 }}>
-			<h1>Photos in Album {albumId}</h1>
+			<h1 className="text-2xl font-bold mb-2">
+				{album ? album?.title : "Photos in Album"}
+			</h1>
 			<Masonry
 				breakpointCols={breakpointColumnsObj}
 				className="my-masonry-grid"
