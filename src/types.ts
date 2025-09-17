@@ -3,6 +3,7 @@ export interface Photo {
 	albumId: string;
 	title: string;
 	url: string;
+	date?: string;
 	description?: string;
 	createdAt?: string;
 	favorite?: boolean;

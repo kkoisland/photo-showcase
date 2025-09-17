@@ -6,10 +6,11 @@ import { usePhotosStore } from "./store/photosStore";
 const PhotoGrid = () => {
 	const { albumId } = useParams<{ albumId: string }>();
 	const allPhotos = usePhotosStore((s) => s.photos);
-	const photos = useMemo(
-		() => allPhotos.filter((p) => p.albumId === albumId),
-		[allPhotos, albumId],
-	);
+	const photos = useMemo(() => {
+		return allPhotos
+			.filter((p) => p.albumId === albumId)
+			.sort((a, b) => ((a.date ?? "") > (b.date ?? "") ? 1 : -1));
+	}, [allPhotos, albumId]);
 
 	const breakpointColumnsObj = {
 		default: 4,
