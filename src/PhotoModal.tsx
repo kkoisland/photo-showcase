@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { usePhotosStore } from "./store/photosStore";
 
-const PhotoDetail = () => {
+const PhotoModal = () => {
 	const { photoId } = useParams<{ photoId: string }>();
 	const photo = usePhotosStore((s) => s.photos.find((p) => p.id === photoId));
 
@@ -30,4 +30,4 @@ const PhotoDetail = () => {
 	);
 };
 
-export default PhotoDetail;
+export default PhotoModal;
