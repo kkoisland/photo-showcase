@@ -32,6 +32,7 @@ usePhotosStore.getState().setPhotos([
 		title: "Sample Photo 1",
 		url: "https://picsum.photos/400/300",
 		type: "photo",
+		date: "2024-01-01T09:15:00",
 	},
 	{
 		id: "p2",
@@ -39,6 +40,7 @@ usePhotosStore.getState().setPhotos([
 		title: "Sample Photo 2",
 		url: "https://picsum.photos/300/400",
 		type: "photo",
+		date: "2024-01-01T12:30:00",
 	},
 	{
 		id: "p3",
@@ -46,6 +48,7 @@ usePhotosStore.getState().setPhotos([
 		title: "Sample Photo 3",
 		url: "https://picsum.photos/500/500",
 		type: "photo",
+		date: "2024-01-02T08:00:00",
 	},
 	{
 		id: "p4",
@@ -53,6 +56,7 @@ usePhotosStore.getState().setPhotos([
 		title: "Sample Photo 4",
 		url: "https://picsum.photos/450/600",
 		type: "photo",
+		date: "2024-01-02T18:45:00",
 	},
 	{
 		id: "p5",
@@ -60,6 +64,7 @@ usePhotosStore.getState().setPhotos([
 		title: "Sample Photo 5",
 		url: "https://picsum.photos/600/450",
 		type: "photo",
+		date: "2024-01-03T10:20:00",
 	},
 	{
 		id: "p6",
@@ -67,13 +72,15 @@ usePhotosStore.getState().setPhotos([
 		title: "Sample Photo 6",
 		url: "https://picsum.photos/350/350",
 		type: "photo",
+		date: "2024-01-03T15:10:00",
 	},
 	{
 		id: "v1",
 		albumId: "a1",
 		title: "Sample Video",
-		url: "https://www.w3schools.com/html/mov_bbb.mp4", // 動画サンプル
+		url: "https://www.w3schools.com/html/mov_bbb.mp4",
 		type: "video",
+		date: "2024-01-03T20:00:00",
 	},
 ]);
 

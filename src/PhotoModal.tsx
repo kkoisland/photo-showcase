@@ -30,13 +30,19 @@ const PhotoModal = () => {
 
 	return (
 		<div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
-			<button
-				type="button"
-				onClick={() => navigate(`/albums/${photo.albumId}`)}
-				className="absolute top-5 right-5 text-white text-2xl"
-			>
-				✕
-			</button>
+			<div className="absolute top-5 right-5 flex items-center gap-4 text-white text-sm">
+				<span>削除</span>
+				<span>再生</span>
+				<span>カバーに設定</span>
+				<button
+					type="button"
+					onClick={() => navigate(`/albums/${photo.albumId}`)}
+					className="text-2xl"
+				>
+					✕
+				</button>
+			</div>
+
 			{prevPhoto && (
 				<Link
 					to={`/photos/${prevPhoto.id}`}
