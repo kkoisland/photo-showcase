@@ -16,7 +16,7 @@ const AlbumGrid = () => {
 			<div
 				style={{
 					display: "grid",
-					gap: 12,
+					margin: 6,
 					gridTemplateColumns: "repeat(auto-fill, minmax(221px, auto))",
 				}}
 			>

@@ -77,10 +77,9 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					<div
 						key={album.id}
 						style={{
-							padding: 12,
+							width: 221,
 							border: "1px solid #ddd",
 							borderRadius: 8,
-							background: "#fafafa",
 						}}
 					>
 						{album.coverUrl && (
@@ -92,12 +91,11 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 									height: 221,
 									objectFit: "cover",
 									borderRadius: 8,
-									marginBottom: 8,
 								}}
 							/>
 						)}
 					</div>
-					<div className="font-bold">{album.title}</div>
+					<div className="font-bold w-52 line-clamp-2 mt-2">{album.title}</div>
 				</Link>
 				<div className="flex items-center gap-2 text-sm opacity-80 mb-2">
 					<span>
