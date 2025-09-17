@@ -3,7 +3,8 @@ import AlbumGrid from "./AlbumGrid";
 import PhotoGrid from "./PhotoGrid";
 import PhotoModal from "./PhotoModal";
 
-export default function AppRoutes() {
+// export default function AppRoutes() {
+const AppRoutes = () => {
 	return (
 		<Routes>
 			<Route path="/" element={<AlbumGrid />} />
@@ -12,4 +13,6 @@ export default function AppRoutes() {
 			<Route path="*" element={<Navigate to="/" replace />} />
 		</Routes>
 	);
-}
+};
+
+export default AppRoutes;
