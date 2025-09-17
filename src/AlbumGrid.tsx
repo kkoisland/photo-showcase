@@ -6,8 +6,13 @@ const AlbumGrid = () => {
 	const albums = useAlbumsStore((s) => s.albums);
 	return (
 		<div style={{ padding: 20 }}>
-			<h1>Albums</h1>
-			<ImportDialog />
+			<div className="flex items-center mb-4">
+				<h1 className="text-2xl font-bold">Albums</h1>
+				<div className="ml-2">
+					<ImportDialog />
+				</div>
+			</div>
+
 			<div
 				style={{
 					display: "grid",
