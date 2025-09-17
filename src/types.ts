@@ -3,6 +3,7 @@ export interface Photo {
 	albumId: string;
 	title: string;
 	url: string;
+	type: "photo" | "video";
 	date?: string;
 	description?: string;
 	createdAt?: string;

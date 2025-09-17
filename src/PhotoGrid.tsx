@@ -33,7 +33,11 @@ const PhotoGrid = () => {
 			>
 				{photos.map((p) => (
 					<Link key={p.id} to={`/photos/${p.id}`}>
-						<img src={p.url} alt={p.title} style={{ width: "100%" }} />
+						{p.type === "video" ? (
+							<video src={p.url} muted playsInline className="w-full rounded" />
+						) : (
+							<img src={p.url} alt={p.title} className="w-full rounded" />
+						)}
 					</Link>
 				))}
 			</Masonry>
