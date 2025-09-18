@@ -1,17 +1,24 @@
 import { useState } from "react";
 
 interface Props {
-	openType: "new" | "existing";
+	openType: "new" | "existing" | "export";
+	albumId?: string;
 }
 
-const AlbumFileDialog = (openType: Props) => {
+const AlbumFileDialog = ({ openType, albumId }: Props) => {
 	const [isOpen, setIsOpen] = useState(false);
 
-	console.log("openType :", openType);
-
-	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+		console.log("handleFileImport called:");
 		const file = e.target.files?.[0];
 		if (!file) return;
+		if (openType === "new") {
+			console.log("新規アルバムにインポートします");
+			// TODO: 新規アルバム作成処理
+		} else if (openType === "existing" && albumId) {
+			console.log(`既存アルバム(${albumId})にインポートします`);
+			// TODO: 既存アルバムに追加処理
+		}
 	};
 
 	return (
@@ -20,7 +27,7 @@ const AlbumFileDialog = (openType: Props) => {
 				Import
 			</button>
 			{isOpen && (
-				// biome-ignore lint: false positivebiome(suppressions/incorrect)
+				// biome-ignore lint: false positive
 				<div
 					role="button"
 					tabIndex={0}
@@ -30,9 +37,13 @@ const AlbumFileDialog = (openType: Props) => {
 						e.stopPropagation();
 					}}
 				>
-					<div className="bg-white p-6 rounded-xl shadow-lg w-80">
+					{/* biome-ignore lint: false positive */}
+					<div
+						className="bg-white p-6 rounded-xl shadow-lg w-80"
+						onClick={(e) => e.stopPropagation()}
+					>
 						<h5 className="text-lg font-bold mb-4">Import Photos</h5>
-						<input type="file" onChange={handleFileChange} />
+						<input type="file" onChange={handleFileImport} />
 						<div className="flex justify-end mt-4">
 							<button
 								type="button"

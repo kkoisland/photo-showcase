@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import AlbumDateEditor from "./components/AlbumDateEditor";
+import AlbumFileDialog from "./components/AlbumFileDialog";
 import { useAlbumsStore } from "./store/albumsStore";
 import type { Album } from "./types";
 
@@ -41,10 +42,12 @@ const ContextMenu = ({ album, setMenuOpen }: ContextMenuProps) => {
 
 			<div style={{ padding: "4px 12px", cursor: "pointer" }}>
 				追加インポート
+				<AlbumFileDialog openType="existing" albumId={album.id} />
 				{/* TODO: Implement "Import More" when working on AlbumFileDialog */}
 			</div>
 			<div style={{ padding: "4px 12px", cursor: "pointer" }}>
 				エクスポート
+				<AlbumFileDialog openType="export" albumId={album.id} />
 				{/* TODO: Implement "Export" when working on AlbumFileDialog */}
 			</div>
 			<button
