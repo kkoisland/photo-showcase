@@ -1,4 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useAlbumsStore } from "./store/albumsStore";
 import { usePhotosStore } from "./store/photosStore";
 
 const PhotoModal = () => {
@@ -34,6 +35,13 @@ const PhotoModal = () => {
 		else navigate(`/albums/${photo.albumId}`);
 	};
 
+	const handleCoverUrl = () => {
+		const { albums, updateAlbum } = useAlbumsStore.getState();
+		const album = albums.find((a) => a.id === photo.albumId);
+		if (!album) return;
+		updateAlbum({ ...album, coverUrl: photo.url });
+	};
+
 	return (
 		<div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
 			<div className="absolute top-5 right-5 flex items-center gap-4 text-white text-sm">
@@ -42,7 +50,11 @@ const PhotoModal = () => {
 						削除
 					</button>
 				</span>
-				<span>カバーに設定</span>
+				<span>
+					<button type="button" onClick={handleCoverUrl}>
+						アルバムカバーに設定
+					</button>
+				</span>
 				<button
 					type="button"
 					onClick={() => navigate(`/albums/${photo.albumId}`)}
