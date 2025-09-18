@@ -27,11 +27,21 @@ const PhotoModal = () => {
 			</div>
 		);
 	}
+	const handleDelete = () => {
+		usePhotosStore.getState().removePhoto(photo.id);
+		if (nextPhoto) navigate(`/photos/${nextPhoto.id}`);
+		else if (prevPhoto) navigate(`/photos/${prevPhoto.id}`);
+		else navigate(`/albums/${photo.albumId}`);
+	};
 
 	return (
 		<div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
 			<div className="absolute top-5 right-5 flex items-center gap-4 text-white text-sm">
-				<span>削除</span>
+				<span>
+					<button type="button" onClick={handleDelete}>
+						削除
+					</button>
+				</span>
 				<span>再生</span>
 				<span>カバーに設定</span>
 				<button
