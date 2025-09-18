@@ -1,5 +1,5 @@
 import AlbumCard from "./AlbumCard";
-import ImportDialog from "./components/ImportDialog";
+import AlbumFileDialog from "./components/AlbumFileDialog";
 import { useAlbumsStore } from "./store/albumsStore";
 
 const AlbumGrid = () => {
@@ -9,7 +9,7 @@ const AlbumGrid = () => {
 			<div className="flex items-center mb-4">
 				<h1 className="text-2xl font-bold">Albums</h1>
 				<div className="ml-2">
-					<ImportDialog />
+					<AlbumFileDialog openType={"new"} />
 				</div>
 			</div>
 

@@ -41,11 +41,11 @@ const ContextMenu = ({ album, setMenuOpen }: ContextMenuProps) => {
 
 			<div style={{ padding: "4px 12px", cursor: "pointer" }}>
 				追加インポート
-				{/* TODO: Implement "Import More" when working on ImportDialog */}
+				{/* TODO: Implement "Import More" when working on AlbumFileDialog */}
 			</div>
 			<div style={{ padding: "4px 12px", cursor: "pointer" }}>
 				エクスポート
-				{/* TODO: Implement "Export" when working on ImportDialog */}
+				{/* TODO: Implement "Export" when working on AlbumFileDialog */}
 			</div>
 			<button
 				type="button"
@@ -56,7 +56,7 @@ const ContextMenu = ({ album, setMenuOpen }: ContextMenuProps) => {
 				}}
 			>
 				アルバムを削除
-				{/* TODO: Implement proper delete logic when working on ImportDialog */}
+				{/* TODO: Implement proper delete logic when working on AlbumFileDialog */}
 			</button>
 		</div>
 	);

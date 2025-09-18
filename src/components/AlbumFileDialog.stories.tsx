@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { MemoryRouter } from "react-router-dom";
-import ImportDialog from "./ImportDialog";
+import AlbumFileDialog from "./AlbumFileDialog";
 
-const meta: Meta<typeof ImportDialog> = {
-	title: "Component/ImportDialog",
-	component: ImportDialog,
+const meta: Meta<typeof AlbumFileDialog> = {
+	title: "Component/AlbumFileDialog",
+	component: AlbumFileDialog,
 	decorators: [
 		(Story) => (
 			<MemoryRouter>
@@ -15,6 +15,6 @@ const meta: Meta<typeof ImportDialog> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ImportDialog>;
+type Story = StoryObj<typeof AlbumFileDialog>;
 
 export const Default: Story = {};
