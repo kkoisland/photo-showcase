@@ -42,7 +42,6 @@ const PhotoModal = () => {
 						削除
 					</button>
 				</span>
-				<span>再生</span>
 				<span>カバーに設定</span>
 				<button
 					type="button"
@@ -62,11 +61,21 @@ const PhotoModal = () => {
 				</Link>
 			)}
 
-			<img
-				src={photo.url}
-				alt={photo.title}
-				className="max-w-[95vw] max-h-[95vh] object-contain rounded-lg"
-			/>
+			{photo.type === "photo" && (
+				<img
+					src={photo.url}
+					alt={photo.title}
+					className="max-w-[95vw] max-h-[95vh] object-contain rounded-lg"
+				/>
+			)}
+			{photo.type === "video" && (
+				<video
+					controls
+					muted
+					src={photo.url}
+					className="max-w-[95vw] max-h-[95vh] object-contain rounded-lg"
+				/>
+			)}
 
 			{nextPhoto && (
 				<Link

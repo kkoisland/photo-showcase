@@ -3,7 +3,6 @@ import AlbumGrid from "./AlbumGrid";
 import PhotoGrid from "./PhotoGrid";
 import PhotoModal from "./PhotoModal";
 
-// export default function AppRoutes() {
 const AppRoutes = () => {
 	return (
 		<Routes>
