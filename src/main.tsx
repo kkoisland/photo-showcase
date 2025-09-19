@@ -14,14 +14,14 @@ useAlbumsStore.getState().setAlbums([
 		title: "Test Album1 Test Album1 Test Album1 Test Album1 Test Album1",
 		coverUrl: "https://picsum.photos/300/200",
 		createdAt: "",
-		photos: [],
+		photoIds: [],
 	},
 	{
 		id: "a2",
 		title: "Test Album2",
 		coverUrl: "https://picsum.photos/300/400",
 		createdAt: "",
-		photos: [],
+		photoIds: [],
 	},
 ]);
 

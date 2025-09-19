@@ -42,12 +42,12 @@ const ContextMenu = ({ album, setMenuOpen }: ContextMenuProps) => {
 
 			<div style={{ padding: "4px 12px", cursor: "pointer" }}>
 				追加インポート
-				<AlbumFileDialog openType="existing" albumId={album.id} />
+				<AlbumFileDialog openType="existing" currentAlbumId={album.id} />
 				{/* TODO: Implement "Import More" when working on AlbumFileDialog */}
 			</div>
 			<div style={{ padding: "4px 12px", cursor: "pointer" }}>
 				エクスポート
-				<AlbumFileDialog openType="export" albumId={album.id} />
+				<AlbumFileDialog openType="export" currentAlbumId={album.id} />
 				{/* TODO: Implement "Export" when working on AlbumFileDialog */}
 			</div>
 			<button
@@ -124,7 +124,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					}}
 				>
 					<div className="flex items-center text-sm opacity-80 mb-2 relative">
-						<span>{album.photos?.length ?? 0} 個のファイル</span>
+						<span>{album.photoIds?.length ?? 0} 個のファイル</span>
 						<button
 							type="button"
 							onClick={(e) => {

@@ -13,7 +13,7 @@ export interface Photo {
 export interface Album {
 	id: string;
 	title: string;
-	photos: Photo[];
+	photoIds: string[];
 	coverUrl?: string;
 	count?: number;
 	shared?: boolean;

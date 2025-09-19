@@ -1,23 +1,66 @@
 import { useState } from "react";
+import { v4 as uuid } from "uuid";
+import { useAlbumsStore } from "../store/albumsStore";
+import { usePhotosStore } from "../store/photosStore";
+import type { Album, Photo } from "../types";
 
 interface Props {
 	openType: "new" | "existing" | "export";
-	albumId?: string;
+	currentAlbumId?: string;
 }
 
-const AlbumFileDialog = ({ openType, albumId }: Props) => {
+const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 	const [isOpen, setIsOpen] = useState(false);
+	const [title, setTitle] = useState("");
 
 	const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-		console.log("handleFileImport called:");
-		const file = e.target.files?.[0];
-		if (!file) return;
+		const albumId = currentAlbumId ?? uuid();
+		const files = Array.from(e.target.files ?? []);
+		const newPhotos: Photo[] = files.map((file) => ({
+			id: uuid(),
+			albumId,
+			title: file.name,
+			url: URL.createObjectURL(file),
+			type: "photo",
+			date: new Date().toISOString(),
+		}));
+
 		if (openType === "new") {
-			console.log("新規アルバムにインポートします");
-			// TODO: 新規アルバム作成処理
+			const album: Album = {
+				id: albumId,
+				title: title || "no album title yet",
+				photoIds: newPhotos.map((p) => p.id),
+				coverUrl: newPhotos[0].url,
+				createdAt: new Date().toISOString(),
+				updatedAt: new Date().toISOString(),
+			};
+			useAlbumsStore.getState().addAlbum(album);
+			newPhotos.forEach((p) => {
+				usePhotosStore.getState().addPhoto(p);
+			});
+			setIsOpen(false);
 		} else if (openType === "existing" && albumId) {
-			console.log(`既存アルバム(${albumId})にインポートします`);
-			// TODO: 既存アルバムに追加処理
+			const album = useAlbumsStore
+				.getState()
+				.albums.find((a) => a.id === albumId);
+			const existingPhotoIds = album ? album.photoIds : [];
+
+			const mergedPhotoIds = [
+				...existingPhotoIds,
+				...newPhotos.map((p) => p.id),
+			];
+			if (album) {
+				useAlbumsStore.getState().updateAlbum({
+					...album,
+					photoIds: mergedPhotoIds,
+					updatedAt: new Date().toISOString(),
+				});
+			}
+			newPhotos.forEach((p) => {
+				usePhotosStore.getState().addPhoto(p);
+			});
+
+			setIsOpen(false);
 		}
 	};
 
@@ -43,7 +86,14 @@ const AlbumFileDialog = ({ openType, albumId }: Props) => {
 						onClick={(e) => e.stopPropagation()}
 					>
 						<h5 className="text-lg font-bold mb-4">Import Photos</h5>
-						<input type="file" onChange={handleFileImport} />
+						<input
+							type="text"
+							value={title}
+							onChange={(e) => setTitle(e.target.value)}
+							placeholder="Album title"
+							className="border rounded px-2 py-1 mb-4 w-full"
+						/>
+						<input type="file" multiple onChange={handleFileImport} />
 						<div className="flex justify-end mt-4">
 							<button
 								type="button"

@@ -7,6 +7,7 @@ interface AlbumsState {
 	addAlbum: (album: Album) => void;
 	updateAlbum: (album: Album) => void;
 	removeAlbum: (id: string) => void;
+	addPhotosToAlbum: (albumId: string, photoIds: string[]) => void;
 }
 
 export const useAlbumsStore = create<AlbumsState>((set) => ({
@@ -20,5 +21,17 @@ export const useAlbumsStore = create<AlbumsState>((set) => ({
 	removeAlbum: (id) =>
 		set((s) => ({
 			albums: s.albums.filter((a) => a.id !== id),
+		})),
+	addPhotosToAlbum: (albumId, photoIds) =>
+		set((s) => ({
+			albums: s.albums.map((a) =>
+				a.id === albumId
+					? {
+							...a,
+							photoIds: [...a.photoIds, ...photoIds],
+							updatedAt: new Date().toISOString(),
+						}
+					: a,
+			),
 		})),
 }));
