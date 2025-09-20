@@ -65,12 +65,14 @@ const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 				} catch {
 					takenDate = new Date().toISOString();
 				}
+				const ext = file.name.split(".").pop()?.toLowerCase();
+				const type = ext === "mp4" || ext === "mov" ? "video" : "photo";
 				return {
 					id: uuid(),
 					albumId,
 					title: file.name,
 					url: URL.createObjectURL(file),
-					type: "photo",
+					type,
 					date: takenDate,
 					hash,
 				};
