@@ -16,9 +16,13 @@ const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 
 	const handleFileImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const albumId = currentAlbumId ?? uuid();
-		const files = Array.from(e.target.files ?? []);
+		const allFiles = Array.from(e.target.files ?? []);
+		const validFiles = allFiles.filter((file) =>
+			/\.(jpe?g|png|mp4|mov)$/i.test(file.name),
+		);
+		const skippedFiles = allFiles.filter((file) => !validFiles.includes(file));
 		const newPhotos: Photo[] = await Promise.all(
-			files.map(async (file) => {
+			validFiles.map(async (file) => {
 				let takenDate: string;
 				try {
 					const exif = await exifr.parse(file);
@@ -76,6 +80,10 @@ const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 
 			setIsOpen(false);
 		}
+		if (skippedFiles.length > 0) {
+			// ToDo: change to snakbar
+			alert(`Skipped files: ${skippedFiles.map((f) => f.name).join(", ")}`);
+		}
 	};
 
 	return (
@@ -107,7 +115,12 @@ const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 							placeholder="Album title"
 							className="border rounded px-2 py-1 mb-4 w-full"
 						/>
-						<input type="file" multiple onChange={handleFileImport} />
+						<input
+							type="file"
+							accept=".jpg,.jpeg,.png,.mp4,.mov"
+							multiple
+							onChange={handleFileImport}
+						/>
 						<div className="flex justify-end mt-4">
 							<button
 								type="button"
