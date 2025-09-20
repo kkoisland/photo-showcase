@@ -16,13 +16,46 @@ const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 
 	const handleFileImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const albumId = currentAlbumId ?? uuid();
+		const album = useAlbumsStore
+			.getState()
+			.albums.find((a) => a.id === albumId);
+		const existingPhotos = album
+			? album.photoIds.map((id) =>
+					usePhotosStore.getState().photos.find((p) => p.id === id),
+				)
+			: [];
+
 		const allFiles = Array.from(e.target.files ?? []);
 		const validFiles = allFiles.filter((file) =>
 			/\.(jpe?g|png|mp4|mov)$/i.test(file.name),
 		);
-		const skippedFiles = allFiles.filter((file) => !validFiles.includes(file));
-		const newPhotos: Photo[] = await Promise.all(
+
+		// Calculate the hash of each file
+		const fileHashes = await Promise.all(
 			validFiles.map(async (file) => {
+				const buffer = await file.arrayBuffer();
+				const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
+				const hashArray = Array.from(new Uint8Array(hashBuffer));
+				const hashHex = hashArray
+					.map((b) => b.toString(16).padStart(2, "0"))
+					.join("");
+				return { file, hash: hashHex };
+			}),
+		);
+
+		// Remove duplicates within the same import
+		const uniqueFileHashes = Array.from(
+			new Map(fileHashes.map((f) => [f.hash, f])).values(),
+		);
+
+		const duplicateFiles = fileHashes
+			.filter(({ hash }) => existingPhotos.some((p) => p?.hash === hash))
+			.map(({ file }) => file);
+
+		const skippedFiles = allFiles.filter((file) => !validFiles.includes(file));
+
+		const newPhotos: Photo[] = await Promise.all(
+			uniqueFileHashes.map(async ({ file, hash }) => {
 				let takenDate: string;
 				try {
 					const exif = await exifr.parse(file);
@@ -39,6 +72,7 @@ const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 					url: URL.createObjectURL(file),
 					type: "photo",
 					date: takenDate,
+					hash,
 				};
 			}),
 		);
@@ -46,7 +80,7 @@ const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 		if (openType === "new") {
 			const album: Album = {
 				id: albumId,
-				title: title || "no album title yet",
+				title: title || "no album title",
 				photoIds: newPhotos.map((p) => p.id),
 				coverUrl: newPhotos[0].url,
 				createdAt: new Date().toISOString(),
@@ -58,10 +92,9 @@ const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 			});
 			setIsOpen(false);
 		} else if (openType === "existing" && albumId) {
-			const album = useAlbumsStore
-				.getState()
-				.albums.find((a) => a.id === albumId);
-			const existingPhotoIds = album ? album.photoIds : [];
+			const existingPhotoIds = existingPhotos
+				.map((p) => p?.id)
+				.filter((id): id is string => Boolean(id));
 
 			const mergedPhotoIds = [
 				...existingPhotoIds,
@@ -74,15 +107,29 @@ const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 					updatedAt: new Date().toISOString(),
 				});
 			}
-			newPhotos.forEach((p) => {
-				usePhotosStore.getState().addPhoto(p);
-			});
+			newPhotos
+				.filter((p) => !duplicateFiles.some((f) => f.name === p.title))
+				.forEach((p) => {
+					usePhotosStore.getState().addPhoto(p);
+				});
 
 			setIsOpen(false);
 		}
-		if (skippedFiles.length > 0) {
-			// ToDo: change to snakbar
-			alert(`Skipped files: ${skippedFiles.map((f) => f.name).join(", ")}`);
+
+		if (skippedFiles.length > 0 || duplicateFiles.length > 0) {
+			// ToDo: change to snackbar
+			alert(
+				[
+					skippedFiles.length > 0
+						? `Skipped files: ${skippedFiles.map((f) => f.name).join(", ")}`
+						: null,
+					duplicateFiles.length > 0
+						? `Duplicate files: ${duplicateFiles.map((f) => f.name).join(", ")}`
+						: null,
+				]
+					.filter(Boolean)
+					.join("\n"),
+			);
 		}
 	};
 

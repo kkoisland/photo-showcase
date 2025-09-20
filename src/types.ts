@@ -4,6 +4,7 @@ export interface Photo {
 	title: string;
 	url: string;
 	type: "photo" | "video";
+	hash: string;
 	date?: string;
 	description?: string;
 	createdAt?: string;
