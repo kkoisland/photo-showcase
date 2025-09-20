@@ -1,3 +1,4 @@
+import * as exifr from "exifr";
 import { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { useAlbumsStore } from "../store/albumsStore";
@@ -13,17 +14,30 @@ const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [title, setTitle] = useState("");
 
-	const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleFileImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const albumId = currentAlbumId ?? uuid();
 		const files = Array.from(e.target.files ?? []);
-		const newPhotos: Photo[] = files.map((file) => ({
-			id: uuid(),
-			albumId,
-			title: file.name,
-			url: URL.createObjectURL(file),
-			type: "photo",
-			date: new Date().toISOString(),
-		}));
+		const newPhotos: Photo[] = await Promise.all(
+			files.map(async (file) => {
+				let takenDate: string;
+				try {
+					const exif = await exifr.parse(file);
+					takenDate = exif?.DateTimeOriginal
+						? exif.DateTimeOriginal.toISOString()
+						: new Date().toISOString();
+				} catch {
+					takenDate = new Date().toISOString();
+				}
+				return {
+					id: uuid(),
+					albumId,
+					title: file.name,
+					url: URL.createObjectURL(file),
+					type: "photo",
+					date: takenDate,
+				};
+			}),
+		);
 
 		if (openType === "new") {
 			const album: Album = {
