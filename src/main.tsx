@@ -33,6 +33,7 @@ usePhotosStore.getState().setPhotos([
 		url: "https://picsum.photos/400/300",
 		type: "photo",
 		date: "2024-01-01T09:15:00",
+		hash: "hash-p1",
 	},
 	{
 		id: "p2",
@@ -41,6 +42,7 @@ usePhotosStore.getState().setPhotos([
 		url: "https://picsum.photos/300/400",
 		type: "photo",
 		date: "2024-01-01T12:30:00",
+		hash: "hash-p2",
 	},
 	{
 		id: "p3",
@@ -49,6 +51,7 @@ usePhotosStore.getState().setPhotos([
 		url: "https://picsum.photos/500/500",
 		type: "photo",
 		date: "2024-01-02T08:00:00",
+		hash: "hash-p3",
 	},
 	{
 		id: "p4",
@@ -57,6 +60,7 @@ usePhotosStore.getState().setPhotos([
 		url: "https://picsum.photos/450/600",
 		type: "photo",
 		date: "2024-01-02T18:45:00",
+		hash: "hash-p4",
 	},
 	{
 		id: "p5",
@@ -65,6 +69,7 @@ usePhotosStore.getState().setPhotos([
 		url: "https://picsum.photos/600/450",
 		type: "photo",
 		date: "2024-01-03T10:20:00",
+		hash: "hash-p5",
 	},
 	{
 		id: "p6",
@@ -73,6 +78,7 @@ usePhotosStore.getState().setPhotos([
 		url: "https://picsum.photos/350/350",
 		type: "photo",
 		date: "2024-01-03T15:10:00",
+		hash: "hash-p6",
 	},
 	{
 		id: "v1",
@@ -81,6 +87,7 @@ usePhotosStore.getState().setPhotos([
 		url: "https://www.w3schools.com/html/mov_bbb.mp4",
 		type: "video",
 		date: "2024-01-03T20:00:00",
+		hash: "hash-v1",
 	},
 ]);
 

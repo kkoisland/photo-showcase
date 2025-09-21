@@ -33,7 +33,13 @@ const PhotoGrid = () => {
 			>
 				{photos.map((p) => (
 					<Link key={p.id} to={`/photos/${p.id}`}>
-						{p.type === "video" ? (
+						{p.type === "video" && p.title.toLowerCase().endsWith(".mov") ? (
+							<div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded">
+								<span className="text-gray-500">
+									.mov file — Not supported yet
+								</span>
+							</div>
+						) : p.type === "video" ? (
 							<video src={p.url} muted playsInline className="w-full rounded" />
 						) : (
 							<img src={p.url} alt={p.title} className="w-full rounded" />
