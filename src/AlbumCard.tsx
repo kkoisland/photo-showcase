@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import AlbumDateEditor from "./components/AlbumDateEditor";
 import AlbumFileDialog from "./components/AlbumFileDialog";
+import ConfirmModal from "./components/ConfirmModal";
 import { useAlbumsStore } from "./store/albumsStore";
 import type { Album } from "./types";
 
@@ -12,6 +13,9 @@ interface ContextMenuProps {
 
 const ContextMenu = ({ album, setMenuOpen }: ContextMenuProps) => {
 	const updateAlbum = useAlbumsStore((s) => s.updateAlbum);
+	const removeAlbum = useAlbumsStore((s) => s.removeAlbum);
+	const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+
 	return (
 		<div
 			style={{
@@ -43,7 +47,6 @@ const ContextMenu = ({ album, setMenuOpen }: ContextMenuProps) => {
 			<div style={{ padding: "4px 12px", cursor: "pointer" }}>
 				追加インポート
 				<AlbumFileDialog openType="existing" currentAlbumId={album.id} />
-				{/* TODO: Implement "Import More" when working on AlbumFileDialog */}
 			</div>
 			<div style={{ padding: "4px 12px", cursor: "pointer" }}>
 				エクスポート
@@ -53,14 +56,25 @@ const ContextMenu = ({ album, setMenuOpen }: ContextMenuProps) => {
 			<button
 				type="button"
 				style={{ padding: "4px 12px", cursor: "pointer" }}
-				onClick={() => {
-					alert("アルバムを削除");
-					setMenuOpen(false);
-				}}
+				onClick={() => setShowRemoveConfirm(true)}
 			>
-				アルバムを削除
-				{/* TODO: Implement proper delete logic when working on AlbumFileDialog */}
+				Delete this album
 			</button>
+			{showRemoveConfirm && (
+				<ConfirmModal
+					message="Delete this album?"
+					confirmLabel="Delete"
+					cancelLabel="Cancel"
+					onConfirm={() => {
+						removeAlbum(album.id);
+						setMenuOpen(false);
+					}}
+					onCancel={() => {
+						setShowRemoveConfirm(false);
+						setMenuOpen(false);
+					}}
+				/>
+			)}
 		</div>
 	);
 };
