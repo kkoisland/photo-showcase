@@ -1,17 +1,19 @@
 interface ConfirmModalProps {
-	message: string;
-	confirmLabel: string;
+	title: string;
+	confirmLabel?: string;
 	cancelLabel?: string;
-	onConfirm: () => void;
+	onConfirm?: () => void;
 	onCancel?: () => void;
+	description?: React.ReactNode;
 }
 
 const ConfirmModal = ({
-	message,
+	title,
 	confirmLabel,
 	cancelLabel,
 	onConfirm,
 	onCancel,
+	description,
 }: ConfirmModalProps) => {
 	return (
 		// biome-ignore lint: false positive
@@ -24,7 +26,8 @@ const ConfirmModal = ({
 				className="bg-white p-4 rounded shadow w-80"
 				onClick={(e) => e.stopPropagation()} // Do not close when click inside
 			>
-				<p className="mb-4">{message}</p>
+				<p className="mb-4 font-bold">{title}</p>
+				{description && <div className="mb-4">{description}</div>}
 				<div className="flex justify-end gap-2">
 					{cancelLabel && (
 						<button
@@ -35,13 +38,15 @@ const ConfirmModal = ({
 							{cancelLabel}
 						</button>
 					)}
-					<button
-						type="button"
-						className="px-3 py-1 bg-red-500 text-white rounded"
-						onClick={onConfirm}
-					>
-						{confirmLabel}
-					</button>
+					{confirmLabel && (
+						<button
+							type="button"
+							className="px-3 py-1 bg-red-500 text-white rounded"
+							onClick={onConfirm}
+						>
+							{confirmLabel}
+						</button>
+					)}
 				</div>
 			</div>
 		</div>

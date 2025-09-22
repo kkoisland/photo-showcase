@@ -5,6 +5,7 @@ import { v4 as uuid } from "uuid";
 import { useAlbumsStore } from "../store/albumsStore";
 import { usePhotosStore } from "../store/photosStore";
 import type { Album, Photo } from "../types";
+import ConfirmModal from "./ConfirmModal";
 
 interface Props {
 	openType: "new" | "existing" | "export";
@@ -13,9 +14,9 @@ interface Props {
 
 const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const [title, setTitle] = useState("");
 	const albumId = currentAlbumId ?? uuid();
 	const album = useAlbumsStore.getState().albums.find((a) => a.id === albumId);
+	const [title, setTitle] = useState(album?.title || "no title");
 	const existingPhotos = album
 		? album.photoIds.map((id) =>
 				usePhotosStore.getState().photos.find((p) => p.id === id),
@@ -159,52 +160,50 @@ const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 				<button type="button" onClick={handleExport}>
 					Export this album as zip
 				</button>
-			) : (
+			) : openType === "new" ? (
 				<button type="button" onClick={() => setIsOpen(true)}>
+					Import new photos
+				</button>
+			) : (
+				<button
+					type="button"
+					onClick={() => {
+						setIsOpen(true);
+					}}
+				>
 					Import more photos
 				</button>
 			)}
+
 			{isOpen && (
-				// biome-ignore lint: false positive
-				<div
-					role="button"
-					tabIndex={0}
-					className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
-					onClick={(e) => {
-						setIsOpen(false);
-						e.stopPropagation();
-					}}
-				>
-					{/* biome-ignore lint: false positive */}
-					<div
-						className="bg-white p-6 rounded-xl shadow-lg w-80"
-						onClick={(e) => e.stopPropagation()}
-					>
-						<h5 className="text-lg font-bold mb-4">Import Photos</h5>
-						<input
-							type="text"
-							value={title}
-							onChange={(e) => setTitle(e.target.value)}
-							placeholder="Album title"
-							className="border rounded px-2 py-1 mb-4 w-full"
-						/>
-						<input
-							type="file"
-							accept=".jpg,.jpeg,.png,.mp4,.mov"
-							multiple
-							onChange={handleFileImport}
-						/>
-						<div className="flex justify-end mt-4">
-							<button
-								type="button"
-								onClick={() => setIsOpen(false)}
-								className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
-							>
-								Cancel
-							</button>
+				<ConfirmModal
+					title="Import Photos"
+					cancelLabel="Cancel"
+					onCancel={() => setIsOpen(false)}
+					description={
+						<div>
+							<label className="block mb-1 text-sm font-medium">
+								Album title
+								<input
+									type="text"
+									value={title}
+									onChange={(e) => setTitle(e.target.value)}
+									placeholder="Enter album title"
+									className="border rounded px-2 py-1 mb-4 w-full"
+								/>{" "}
+							</label>
+							<label className="block mb-1 text-sm font-medium">
+								Select photos or videos
+								<input
+									type="file"
+									accept=".jpg,.jpeg,.png,.mp4,.mov"
+									multiple
+									onChange={handleFileImport}
+								/>
+							</label>
 						</div>
-					</div>
-				</div>
+					}
+				/>
 			)}
 		</>
 	);

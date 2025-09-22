@@ -59,7 +59,7 @@ const ContextMenu = ({ album, setMenuOpen }: ContextMenuProps) => {
 			</button>
 			{showRemoveConfirm && (
 				<ConfirmModal
-					message="Delete this album?"
+					title="Delete this album?"
 					confirmLabel="Delete"
 					cancelLabel="Cancel"
 					onConfirm={() => {
