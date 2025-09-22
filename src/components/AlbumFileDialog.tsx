@@ -165,12 +165,7 @@ const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 					Import new photos
 				</button>
 			) : (
-				<button
-					type="button"
-					onClick={() => {
-						setIsOpen(true);
-					}}
-				>
+				<button type="button" onClick={() => setIsOpen(true)}>
 					Import more photos
 				</button>
 			)}

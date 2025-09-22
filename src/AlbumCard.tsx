@@ -6,83 +6,16 @@ import ConfirmModal from "./components/ConfirmModal";
 import { useAlbumsStore } from "./store/albumsStore";
 import type { Album } from "./types";
 
-interface ContextMenuProps {
-	album: Album;
-	setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const ContextMenu = ({ album, setMenuOpen }: ContextMenuProps) => {
-	const updateAlbum = useAlbumsStore((s) => s.updateAlbum);
-	const removeAlbum = useAlbumsStore((s) => s.removeAlbum);
-	const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
-
-	return (
-		<div
-			style={{
-				position: "absolute",
-				top: "100%",
-				right: 0,
-				borderRadius: 4,
-				boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-				padding: "8px 0",
-			}}
-		>
-			<button
-				type="button"
-				style={{ padding: "4px 12px", cursor: "pointer" }}
-				onClick={() => {
-					const newName = prompt(
-						"新しいアルバム名を入力してください",
-						album.title,
-					);
-					if (newName) {
-						updateAlbum({ ...album, title: newName });
-					}
-					setMenuOpen(false);
-				}}
-			>
-				Rename album
-			</button>
-
-			<div style={{ padding: "4px 12px", cursor: "pointer" }}>
-				<AlbumFileDialog openType="existing" currentAlbumId={album.id} />
-			</div>
-			<div style={{ padding: "4px 12px", cursor: "pointer" }}>
-				<AlbumFileDialog openType="export" currentAlbumId={album.id} />
-			</div>
-			<button
-				type="button"
-				style={{ padding: "4px 12px", cursor: "pointer" }}
-				onClick={() => setShowRemoveConfirm(true)}
-			>
-				Delete this album
-			</button>
-			{showRemoveConfirm && (
-				<ConfirmModal
-					title="Delete this album?"
-					confirmLabel="Delete"
-					cancelLabel="Cancel"
-					onConfirm={() => {
-						removeAlbum(album.id);
-						setMenuOpen(false);
-					}}
-					onCancel={() => {
-						setShowRemoveConfirm(false);
-						setMenuOpen(false);
-					}}
-				/>
-			)}
-		</div>
-	);
-};
 interface AlbumCardProps {
 	album: Album;
 }
 
 const AlbumCard = ({ album }: AlbumCardProps) => {
 	const [isDateEditorOpen, setIsDateEditorOpen] = useState(false);
-	const [menuOpen, setMenuOpen] = useState(false);
+	const [contextMenuOpen, setContextMenuOpen] = useState(false);
 	const updateAlbum = useAlbumsStore((s) => s.updateAlbum);
+	const removeAlbum = useAlbumsStore((s) => s.removeAlbum);
+	const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
 
 	return (
 		<>
@@ -157,14 +90,72 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 							type="button"
 							onClick={(e) => {
 								e.preventDefault();
-								setMenuOpen((prev) => !prev);
+								setContextMenuOpen((prev) => !prev);
 							}}
 							className="ml-2"
 						>
 							⋮
 						</button>
-						{menuOpen && (
-							<ContextMenu setMenuOpen={setMenuOpen} album={album} />
+						{contextMenuOpen && (
+							<div
+								style={{
+									position: "absolute",
+									top: "100%",
+									right: 0,
+									borderRadius: 4,
+									boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+									padding: "8px 0",
+								}}
+							>
+								<button
+									type="button"
+									style={{ padding: "4px 12px", cursor: "pointer" }}
+									onClick={() => {
+										const newName = prompt("Enter new album name", album.title);
+										if (newName) {
+											updateAlbum({ ...album, title: newName });
+										}
+										setContextMenuOpen(false);
+									}}
+								>
+									Rename album
+								</button>
+
+								<div style={{ padding: "4px 12px", cursor: "pointer" }}>
+									<AlbumFileDialog
+										openType="existing"
+										currentAlbumId={album.id}
+									/>
+								</div>
+								<div style={{ padding: "4px 12px", cursor: "pointer" }}>
+									<AlbumFileDialog
+										openType="export"
+										currentAlbumId={album.id}
+									/>
+								</div>
+								<button
+									type="button"
+									style={{ padding: "4px 12px", cursor: "pointer" }}
+									onClick={() => setShowRemoveConfirm(true)}
+								>
+									Delete this album
+								</button>
+								{showRemoveConfirm && (
+									<ConfirmModal
+										title="Delete this album?"
+										confirmLabel="Delete"
+										cancelLabel="Cancel"
+										onConfirm={() => {
+											removeAlbum(album.id);
+											setContextMenuOpen(false);
+										}}
+										onCancel={() => {
+											setShowRemoveConfirm(false);
+											setContextMenuOpen(false);
+										}}
+									/>
+								)}
+							</div>
 						)}
 					</div>
 				</div>
