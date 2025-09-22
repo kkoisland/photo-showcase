@@ -14,6 +14,10 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 	const [isDateEditorOpen, setIsDateEditorOpen] = useState(false);
 	const [contextMenuOpen, setContextMenuOpen] = useState(false);
 	const updateAlbum = useAlbumsStore((s) => s.updateAlbum);
+
+	const [showRenameModal, setShowRenameModal] = useState(false);
+	const [newTitle, setNewTitle] = useState(album.title);
+
 	const removeAlbum = useAlbumsStore((s) => s.removeAlbum);
 	const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
 
@@ -111,11 +115,8 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 									type="button"
 									style={{ padding: "4px 12px", cursor: "pointer" }}
 									onClick={() => {
-										const newName = prompt("Enter new album name", album.title);
-										if (newName) {
-											updateAlbum({ ...album, title: newName });
-										}
 										setContextMenuOpen(false);
+										setShowRenameModal(true);
 									}}
 								>
 									Rename album
@@ -160,6 +161,26 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					</div>
 				</div>
 			</div>
+			{showRenameModal && (
+				<ConfirmModal
+					title="Rename album"
+					confirmLabel="Save"
+					cancelLabel="Cancel"
+					onConfirm={() => {
+						updateAlbum({ ...album, title: newTitle });
+						setShowRenameModal(false);
+					}}
+					onCancel={() => setShowRenameModal(false)}
+					description={
+						<input
+							type="text"
+							value={newTitle}
+							onChange={(e) => setNewTitle(e.target.value)}
+							className="border rounded px-2 py-1 w-full"
+						/>
+					}
+				/>
+			)}
 			{isDateEditorOpen && (
 				<AlbumDateEditor
 					album={album}
