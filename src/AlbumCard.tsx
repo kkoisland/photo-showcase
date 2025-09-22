@@ -41,17 +41,14 @@ const ContextMenu = ({ album, setMenuOpen }: ContextMenuProps) => {
 					setMenuOpen(false);
 				}}
 			>
-				アルバム名を変更
+				Rename album
 			</button>
 
 			<div style={{ padding: "4px 12px", cursor: "pointer" }}>
-				追加インポート
 				<AlbumFileDialog openType="existing" currentAlbumId={album.id} />
 			</div>
 			<div style={{ padding: "4px 12px", cursor: "pointer" }}>
-				エクスポート
 				<AlbumFileDialog openType="export" currentAlbumId={album.id} />
-				{/* TODO: Implement "Export" when working on AlbumFileDialog */}
 			</div>
 			<button
 				type="button"

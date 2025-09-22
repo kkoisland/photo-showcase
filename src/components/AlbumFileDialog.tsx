@@ -1,4 +1,5 @@
 import * as exifr from "exifr";
+import JSZip from "jszip";
 import { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { useAlbumsStore } from "../store/albumsStore";
@@ -13,18 +14,15 @@ interface Props {
 const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [title, setTitle] = useState("");
+	const albumId = currentAlbumId ?? uuid();
+	const album = useAlbumsStore.getState().albums.find((a) => a.id === albumId);
+	const existingPhotos = album
+		? album.photoIds.map((id) =>
+				usePhotosStore.getState().photos.find((p) => p.id === id),
+			)
+		: [];
 
 	const handleFileImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		const albumId = currentAlbumId ?? uuid();
-		const album = useAlbumsStore
-			.getState()
-			.albums.find((a) => a.id === albumId);
-		const existingPhotos = album
-			? album.photoIds.map((id) =>
-					usePhotosStore.getState().photos.find((p) => p.id === id),
-				)
-			: [];
-
 		const allFiles = Array.from(e.target.files ?? []);
 		const validFiles = allFiles.filter((file) =>
 			/\.(jpe?g|png|mp4|mov)$/i.test(file.name),
@@ -135,11 +133,37 @@ const AlbumFileDialog = ({ openType, currentAlbumId }: Props) => {
 		}
 	};
 
+	const handleExport = async () => {
+		if (openType !== "export" || !album) return;
+
+		const zip = new JSZip();
+		zip.file("album.json", JSON.stringify(album, null, 2));
+
+		for (const photo of existingPhotos) {
+			if (photo?.url) {
+				const blob = await fetch(photo.url).then((r) => r.blob());
+				zip.file(photo.title, blob);
+			}
+		}
+
+		const content = await zip.generateAsync({ type: "blob" });
+		const link = document.createElement("a");
+		link.href = URL.createObjectURL(content);
+		link.download = `${album.title || "album"}.zip`;
+		link.click();
+	};
+
 	return (
 		<>
-			<button type="button" onClick={() => setIsOpen(true)}>
-				Import
-			</button>
+			{openType === "export" ? (
+				<button type="button" onClick={handleExport}>
+					Export this album as zip
+				</button>
+			) : (
+				<button type="button" onClick={() => setIsOpen(true)}>
+					Import more photos
+				</button>
+			)}
 			{isOpen && (
 				// biome-ignore lint: false positive
 				<div
