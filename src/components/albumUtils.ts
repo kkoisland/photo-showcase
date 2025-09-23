@@ -128,9 +128,9 @@ const importPhotos = async (
  * @param albumId Album ID
  * @returns Blob | null
  */
-const exportAlbum = async (albumId: string): Promise<Blob | null> => {
+const exportAlbum = async (albumId: string): Promise<void> => {
 	const album = useAlbumsStore.getState().albums.find((a) => a.id === albumId);
-	if (!album) return null;
+	if (!album) return;
 
 	const photos = album.photoIds
 		.map((id) => usePhotosStore.getState().photos.find((p) => p.id === id))
@@ -145,7 +145,13 @@ const exportAlbum = async (albumId: string): Promise<Blob | null> => {
 	}
 
 	const content = await zip.generateAsync({ type: "blob" });
-	return content;
+
+	const url = URL.createObjectURL(content);
+	const a = document.createElement("a");
+	a.href = url;
+	a.download = `${album.title || "album"}.zip`;
+	a.click();
+	URL.revokeObjectURL(url);
 };
 
 const albumUtils = { importPhotos, exportAlbum };

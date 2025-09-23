@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import AlbumDateEditor from "./components/AlbumDateEditor";
+import albumUtils from "./components/albumUtils";
 import ConfirmModal from "./components/ConfirmModal";
 import { useAlbumsStore } from "./store/albumsStore";
 import type { Album } from "./types";
@@ -10,15 +11,23 @@ interface AlbumCardProps {
 }
 
 const AlbumCard = ({ album }: AlbumCardProps) => {
+	const updateAlbum = useAlbumsStore((s) => s.updateAlbum);
+	const removeAlbum = useAlbumsStore((s) => s.removeAlbum);
+	const [newTitle, setNewTitle] = useState(album.title);
 	const [isDateEditorOpen, setIsDateEditorOpen] = useState(false);
 	const [contextMenuOpen, setContextMenuOpen] = useState(false);
-	const updateAlbum = useAlbumsStore((s) => s.updateAlbum);
-
 	const [showRenameModal, setShowRenameModal] = useState(false);
-	const [newTitle, setNewTitle] = useState(album.title);
-
-	const removeAlbum = useAlbumsStore((s) => s.removeAlbum);
+	const [showImportMoreModal, setShowImportMoreModal] = useState(false);
 	const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+
+	const handleFileImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const files = Array.from(e.target.files ?? []);
+		if (files.length === 0) return;
+
+		await albumUtils.importPhotos(files, album.id, "existing", newTitle);
+
+		setShowImportMoreModal(false);
+	};
 
 	return (
 		<>
@@ -70,7 +79,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 						fontSize: "0.9em",
 					}}
 				>
-					<div className="flex items-center text-sm opacity-80 mb-2 relative">
+					<div className="flex items-center text-sm mb-2 relative">
 						<span>{album.photoIds?.length ?? 0} 個のファイル</span>
 						<button
 							type="button"
@@ -108,6 +117,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 									borderRadius: 4,
 									boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
 									padding: "8px 0",
+									backgroundColor: "#fff",
 								}}
 							>
 								<button
@@ -120,12 +130,29 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 								>
 									Rename album
 								</button>
-
-								<div style={{ padding: "4px 12px", cursor: "pointer" }}>
-									Import more photos
+								<div>
+									<button
+										type="button"
+										style={{ padding: "4px 12px", cursor: "pointer" }}
+										onClick={() => {
+											setShowImportMoreModal(true);
+											setContextMenuOpen(false);
+										}}
+									>
+										Import more photos
+									</button>
 								</div>
-								<div style={{ padding: "4px 12px", cursor: "pointer" }}>
-									Export
+								<div>
+									<button
+										type="button"
+										style={{ padding: "4px 12px", cursor: "pointer" }}
+										onClick={() => {
+											albumUtils.exportAlbum(album.id);
+											setContextMenuOpen(false);
+										}}
+									>
+										Export
+									</button>
 								</div>
 								<button
 									type="button"
@@ -134,26 +161,17 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 								>
 									Delete this album
 								</button>
-								{showRemoveConfirm && (
-									<ConfirmModal
-										title="Delete this album?"
-										confirmLabel="Delete"
-										cancelLabel="Cancel"
-										onConfirm={() => {
-											removeAlbum(album.id);
-											setContextMenuOpen(false);
-										}}
-										onCancel={() => {
-											setShowRemoveConfirm(false);
-											setContextMenuOpen(false);
-										}}
-									/>
-								)}
 							</div>
 						)}
 					</div>
 				</div>
 			</div>
+			{isDateEditorOpen && (
+				<AlbumDateEditor
+					album={album}
+					onClose={() => setIsDateEditorOpen(false)}
+				/>
+			)}
 			{showRenameModal && (
 				<ConfirmModal
 					title="Rename album"
@@ -162,6 +180,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					onConfirm={() => {
 						updateAlbum({ ...album, title: newTitle });
 						setShowRenameModal(false);
+						setContextMenuOpen(false);
 					}}
 					onCancel={() => setShowRenameModal(false)}
 					description={
@@ -174,10 +193,52 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					}
 				/>
 			)}
-			{isDateEditorOpen && (
-				<AlbumDateEditor
-					album={album}
-					onClose={() => setIsDateEditorOpen(false)}
+			{showImportMoreModal && (
+				<ConfirmModal
+					title="Import more photos"
+					cancelLabel="Cancel"
+					onCancel={() => {
+						setShowImportMoreModal(false);
+						setContextMenuOpen(false);
+					}}
+					description={
+						<div>
+							<label className="block mb-1 text-sm font-medium">
+								Album title
+								<input
+									type="text"
+									value={newTitle}
+									onChange={(e) => setNewTitle(e.target.value)}
+									placeholder="Enter album title"
+									className="border rounded px-2 py-1 mb-4 w-full"
+								/>{" "}
+							</label>
+							<label className="block mb-1 text-sm font-medium">
+								Select photos or videos
+								<input
+									type="file"
+									accept=".jpg,.jpeg,.png,.mp4,.mov"
+									multiple
+									onChange={handleFileImport}
+								/>
+							</label>
+						</div>
+					}
+				/>
+			)}
+			{showRemoveConfirm && (
+				<ConfirmModal
+					title="Delete this album?"
+					confirmLabel="Delete"
+					cancelLabel="Cancel"
+					onConfirm={() => {
+						removeAlbum(album.id);
+						setContextMenuOpen(false);
+					}}
+					onCancel={() => {
+						setShowRemoveConfirm(false);
+						setContextMenuOpen(false);
+					}}
 				/>
 			)}
 		</>
