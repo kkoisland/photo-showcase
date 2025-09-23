@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import AlbumDateEditor from "./components/AlbumDateEditor";
 import AlbumImportForm from "./components/AlbumImportForm";
@@ -20,6 +20,21 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 	const [showRenameModal, setShowRenameModal] = useState(false);
 	const [showImportMoreModal, setShowImportMoreModal] = useState(false);
 	const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+	const menuRef = useRef<HTMLDivElement | null>(null);
+
+	useEffect(() => {
+		const handleClickOutside = (e: MouseEvent) => {
+			if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+				setContextMenuOpen(false);
+			}
+		};
+		if (contextMenuOpen) {
+			document.addEventListener("mousedown", handleClickOutside);
+		}
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [contextMenuOpen]);
 
 	return (
 		<>
@@ -63,7 +78,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 							setIsDateEditorOpen(true);
 						}}
 					>
-						編集
+						Edit date
 					</button>
 				</div>
 				<div
@@ -102,6 +117,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 						</button>
 						{contextMenuOpen && (
 							<div
+								ref={menuRef}
 								style={{
 									position: "absolute",
 									top: "100%",
