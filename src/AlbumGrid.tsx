@@ -1,11 +1,14 @@
 import { useState } from "react";
+import { v4 as uuid } from "uuid";
 import AlbumCard from "./AlbumCard";
-import AlbumImportNewDialog from "./components/AlbumImportNewDialog";
+import AlbumImportForm from "./components/AlbumImportForm";
+import ConfirmModal from "./components/ConfirmModal";
 import { useAlbumsStore } from "./store/albumsStore";
 
 const AlbumGrid = () => {
 	const albums = useAlbumsStore((s) => s.albums);
 	const [showDialog, setShowDialog] = useState(false);
+	const newAlbumId = uuid();
 
 	return (
 		<div style={{ padding: 20 }}>
@@ -35,7 +38,18 @@ const AlbumGrid = () => {
 			</div>
 
 			{showDialog && (
-				<AlbumImportNewDialog onCancel={() => setShowDialog(false)} />
+				<ConfirmModal
+					title="Import Photos"
+					cancelLabel="Cancel"
+					onCancel={() => setShowDialog(false)}
+					description={
+						<AlbumImportForm
+							openType="new"
+							onCancel={() => setShowDialog(false)}
+							albumId={newAlbumId}
+						/>
+					}
+				/>
 			)}
 		</div>
 	);
