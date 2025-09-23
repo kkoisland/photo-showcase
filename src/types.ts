@@ -29,13 +29,6 @@ export interface LightboxState {
 	photoId?: string | null;
 }
 
-export interface SnackBar {
-	isOpen: boolean;
-	message: string;
-	actionLabel?: string;
-	action?: () => void;
-}
-
 export type SortKey = "title" | "createdAt";
 export type SortOrder = "asc" | "desc";
 
@@ -47,7 +40,6 @@ export interface UIState {
 	sort: { key: SortKey; order: SortOrder };
 	lightbox: LightboxState;
 	view: "grid" | "detail";
-	snackbar: SnackBar;
 }
 
 export const initialUIState: UIState = {
@@ -58,5 +50,4 @@ export const initialUIState: UIState = {
 	sort: { key: "createdAt", order: "desc" },
 	lightbox: { isOpen: false, photoId: null },
 	view: "grid",
-	snackbar: { isOpen: false, message: "" },
 };
