@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import AlbumDateEditor from "./components/AlbumDateEditor";
-import AlbumFileDialog from "./components/AlbumFileDialog";
 import ConfirmModal from "./components/ConfirmModal";
 import { useAlbumsStore } from "./store/albumsStore";
 import type { Album } from "./types";
@@ -123,16 +122,10 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 								</button>
 
 								<div style={{ padding: "4px 12px", cursor: "pointer" }}>
-									<AlbumFileDialog
-										openType="existing"
-										currentAlbumId={album.id}
-									/>
+									Import more photos
 								</div>
 								<div style={{ padding: "4px 12px", cursor: "pointer" }}>
-									<AlbumFileDialog
-										openType="export"
-										currentAlbumId={album.id}
-									/>
+									Export
 								</div>
 								<button
 									type="button"
