@@ -51,3 +51,8 @@ export const initialUIState: UIState = {
 	lightbox: { isOpen: false, photoId: null },
 	view: "grid",
 };
+
+export interface Snack {
+	type: "success" | "error" | "info" | "warning";
+	message: string;
+}

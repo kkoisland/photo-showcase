@@ -5,13 +5,14 @@ import AlbumImportForm from "./components/AlbumImportForm";
 import albumUtils from "./components/albumUtils";
 import ConfirmModal from "./components/ConfirmModal";
 import { useAlbumsStore } from "./store/albumsStore";
-import type { Album } from "./types";
+import type { Album, Snack } from "./types";
 
 interface AlbumCardProps {
 	album: Album;
+	setSnack: React.Dispatch<React.SetStateAction<Snack | null>>;
 }
 
-const AlbumCard = ({ album }: AlbumCardProps) => {
+const AlbumCard = ({ album, setSnack }: AlbumCardProps) => {
 	const updateAlbum = useAlbumsStore((s) => s.updateAlbum);
 	const removeAlbum = useAlbumsStore((s) => s.removeAlbum);
 	const [newTitle, setNewTitle] = useState(album.title);
@@ -225,6 +226,10 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					cancelLabel="Cancel"
 					onConfirm={() => {
 						removeAlbum(album.id);
+						setSnack({
+							type: "success",
+							message: `'${album.title}' is deleted`,
+						});
 						setContextMenuOpen(false);
 					}}
 					onCancel={() => {

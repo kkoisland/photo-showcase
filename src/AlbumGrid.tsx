@@ -3,13 +3,15 @@ import { v4 as uuid } from "uuid";
 import AlbumCard from "./AlbumCard";
 import AlbumImportForm from "./components/AlbumImportForm";
 import ConfirmModal from "./components/ConfirmModal";
+import SnackBar from "./components/SnackBar";
 import { useAlbumsStore } from "./store/albumsStore";
+import type { Snack } from "./types";
 
 const AlbumGrid = () => {
 	const albums = useAlbumsStore((s) => s.albums);
 	const [showDialog, setShowDialog] = useState(false);
+	const [snack, setSnack] = useState<Snack | null>(null);
 	const newAlbumId = uuid();
-
 	return (
 		<div style={{ padding: 20 }}>
 			<div className="flex items-center mb-4">
@@ -33,7 +35,7 @@ const AlbumGrid = () => {
 				}}
 			>
 				{albums.map((a) => (
-					<AlbumCard album={a} key={a.id} />
+					<AlbumCard album={a} key={a.id} setSnack={setSnack} />
 				))}
 			</div>
 
@@ -51,6 +53,7 @@ const AlbumGrid = () => {
 					}
 				/>
 			)}
+			{snack && <SnackBar snack={snack} />}
 		</div>
 	);
 };
