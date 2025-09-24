@@ -215,6 +215,7 @@ const AlbumCard = ({ album, setSnack }: AlbumCardProps) => {
 							openType="existing"
 							albumId={album.id}
 							onCancel={() => setShowImportMoreModal(false)}
+							setSnack={setSnack}
 						/>
 					}
 				/>

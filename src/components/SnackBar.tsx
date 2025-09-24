@@ -10,6 +10,7 @@ const SnackBar = ({ snack }: SnackBarProps) => {
 
 	// biome-ignore lint: false positive
 	useEffect(() => {
+		setVisible(true);
 		const timer = setTimeout(() => setVisible(false), 5000);
 		return () => clearTimeout(timer);
 	}, [snack]);
