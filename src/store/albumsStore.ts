@@ -8,6 +8,7 @@ interface AlbumsState {
 	updateAlbum: (album: Album) => void;
 	removeAlbum: (id: string) => void;
 	addPhotosToAlbum: (albumId: string, photoIds: string[]) => void;
+	restoreAlbum: (album: Album) => void;
 }
 
 export const useAlbumsStore = create<AlbumsState>((set) => ({
@@ -33,5 +34,9 @@ export const useAlbumsStore = create<AlbumsState>((set) => ({
 						}
 					: a,
 			),
+		})),
+	restoreAlbum: (album) =>
+		set((s) => ({
+			albums: [...s.albums, album],
 		})),
 }));

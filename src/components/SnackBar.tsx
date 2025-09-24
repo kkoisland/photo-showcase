@@ -38,7 +38,16 @@ const SnackBar = ({ snack }: SnackBarProps) => {
 		<div
 			className={`fixed bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded shadow ${styles}`}
 		>
-			{snack.message}
+			<span>{snack.message}</span>
+			{snack.actionLabel && snack.onAction && (
+				<button
+					type="button"
+					onClick={snack.onAction}
+					className="underline font-medium"
+				>
+					{snack.actionLabel}
+				</button>
+			)}
 		</div>
 	);
 };

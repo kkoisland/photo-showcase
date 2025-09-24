@@ -55,4 +55,6 @@ export const initialUIState: UIState = {
 export interface Snack {
 	type: "success" | "error" | "info" | "warning";
 	message: string;
+	actionLabel?: string;
+	onAction?: () => void;
 }

@@ -94,13 +94,12 @@ const AlbumCard = ({ album, setSnack }: AlbumCardProps) => {
 							onClick={(e) => {
 								e.preventDefault();
 								if (album.shared) {
-									// TODO: 後でSnackbarへ置き換え
+									// TODO: 共有リンク表示モーダル＋コピー機能
 									alert(`共有リンク: https://example.com/albums/${album.id}`);
 								} else {
 									updateAlbum({ ...album, shared: true });
 									alert("このアルバムを共有しました");
 								}
-								// TODO: Snackbar実装時に置き換える（Copyボタン＋外側クリックで閉じる）
 							}}
 							className="underline text-blue-600"
 						>
@@ -229,8 +228,11 @@ const AlbumCard = ({ album, setSnack }: AlbumCardProps) => {
 						removeAlbum(album.id);
 						setSnack({
 							type: "success",
-							message: `'${album.title}' is deleted`,
+							message: "Album deleted: ",
+							actionLabel: "Undo",
+							onAction: () => useAlbumsStore.getState().restoreAlbum(album),
 						});
+
 						setContextMenuOpen(false);
 					}}
 					onCancel={() => {
