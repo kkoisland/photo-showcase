@@ -32,7 +32,7 @@ const SnackBar = () => {
 		<div
 			className={`fixed bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded shadow ${styles}`}
 		>
-			<span>{snack?.message}</span>
+			<span className="whitespace-pre-line">{snack?.message}</span>
 			{snack?.actionLabel && snack?.onAction && (
 				<button
 					type="button"

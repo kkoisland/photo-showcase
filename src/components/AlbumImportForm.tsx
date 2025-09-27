@@ -19,18 +19,26 @@ const AlbumImportForm = ({ openType, albumId, onCancel }: Props) => {
 
 		onCancel();
 
+		const messages: string[] = [];
+
 		if (skippedInvalidFiles.length > 0) {
 			const names = skippedInvalidFiles.map((f) => f.name).join(", ");
-			showSnack({
-				type: "warning",
-				message: `${skippedInvalidFiles.length} invalid files skipped: ${names}`,
-			});
+			messages.push(
+				`${skippedInvalidFiles.length} invalid files skipped: ${names}`,
+			);
 		}
+
 		if (duplicateFiles.length > 0) {
 			const names = duplicateFiles.map((f) => f.name).join(", ");
+			messages.push(
+				`${duplicateFiles.length} duplicate files ignored: ${names}`,
+			);
+		}
+
+		if (messages.length > 0) {
 			showSnack({
-				type: "info",
-				message: `${duplicateFiles.length} duplicate files ignored: ${names}`,
+				type: "warning",
+				message: messages.join("\n"),
 			});
 		}
 	};
