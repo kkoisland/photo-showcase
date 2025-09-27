@@ -15,6 +15,7 @@ interface AlbumCardProps {
 const AlbumCard = ({ album }: AlbumCardProps) => {
 	const updateAlbum = useAlbumsStore((s) => s.updateAlbum);
 	const removeAlbum = useAlbumsStore((s) => s.removeAlbum);
+	const restoreAlbum = useAlbumsStore((s) => s.restoreAlbum);
 	const [newTitle, setNewTitle] = useState(album.title);
 	const [isDateEditorOpen, setIsDateEditorOpen] = useState(false);
 	const [contextMenuOpen, setContextMenuOpen] = useState(false);
@@ -230,7 +231,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 							type: "success",
 							message: "Album deleted: ",
 							actionLabel: "Undo",
-							onAction: () => useAlbumsStore.getState().restoreAlbum(album),
+							onAction: () => restoreAlbum(album),
 						});
 						setContextMenuOpen(false);
 					}}

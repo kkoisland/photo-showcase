@@ -6,6 +6,7 @@ const PhotoModal = () => {
 	const { photoId } = useParams<{ photoId: string }>();
 	const allPhotos = usePhotosStore((s) => s.photos);
 	const navigate = useNavigate();
+	const removePhoto = usePhotosStore((s) => s.removePhoto);
 
 	// Sort date ascending
 	const sortedPhotos = [...allPhotos].sort((a, b) =>
@@ -29,7 +30,7 @@ const PhotoModal = () => {
 		);
 	}
 	const handleDelete = () => {
-		usePhotosStore.getState().removePhoto(photo.id);
+		removePhoto(photo.id);
 		if (nextPhoto) navigate(`/photos/${nextPhoto.id}`);
 		else if (prevPhoto) navigate(`/photos/${prevPhoto.id}`);
 		else navigate(`/albums/${photo.albumId}`);
