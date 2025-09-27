@@ -1,13 +1,17 @@
 import { useMemo } from "react";
 import Masonry from "react-masonry-css";
 import { Link, useParams } from "react-router-dom";
+import handleCopyToClipboard from "./components/copyToClipboard";
+import SnackBar from "./components/SnackBar";
 import { useAlbumsStore } from "./store/albumsStore";
 import { usePhotosStore } from "./store/photosStore";
+import { useUIStore } from "./store/uiStore";
 
 const PhotoGrid = () => {
 	const { albumId } = useParams<{ albumId: string }>();
 	const allPhotos = usePhotosStore((s) => s.photos);
 	const album = useAlbumsStore((s) => s.albums.find((a) => a.id === albumId));
+	const showSnack = useUIStore((s) => s.showSnack);
 	const photos = useMemo(() => {
 		return allPhotos
 			.filter((p) => p.albumId === albumId)
@@ -26,6 +30,26 @@ const PhotoGrid = () => {
 			<h1 className="text-2xl font-bold mb-2">
 				{album ? album?.title : "Photos in Album"}
 			</h1>
+			{album?.sharedUrl && (
+				<div className="mb-2">
+					<span>Shared Link: </span>
+					<button
+						type="button"
+						onClick={(e) => {
+							e.preventDefault();
+							const sharedUrl = album.sharedUrl;
+							if (sharedUrl) handleCopyToClipboard(sharedUrl);
+							showSnack({
+								type: "info",
+								message: "Link copied to clipboard",
+							});
+						}}
+						className="underline text-blue-600"
+					>
+						{album?.sharedUrl}
+					</button>
+				</div>
+			)}
 			<Masonry
 				breakpointCols={breakpointColumnsObj}
 				className="my-masonry-grid"
@@ -47,6 +71,7 @@ const PhotoGrid = () => {
 					</Link>
 				))}
 			</Masonry>
+			<SnackBar />
 		</div>
 	);
 };

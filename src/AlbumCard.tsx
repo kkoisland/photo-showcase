@@ -4,6 +4,7 @@ import AlbumDateEditor from "./components/AlbumDateEditor";
 import AlbumImportForm from "./components/AlbumImportForm";
 import albumUtils from "./components/albumUtils";
 import ConfirmModal from "./components/ConfirmModal";
+import handleCopyToClipboard from "./components/copyToClipboard";
 import { useAlbumsStore } from "./store/albumsStore";
 import { useUIStore } from "./store/uiStore";
 import type { Album } from "./types";
@@ -38,14 +39,6 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, [contextMenuOpen]);
-
-	const handleCopyToClipboard = async (sharedUrl: string) => {
-		try {
-			return await navigator.clipboard.writeText(sharedUrl);
-		} catch (e) {
-			console.error("Clipboard copy failed", e);
-		}
-	};
 
 	return (
 		<>
