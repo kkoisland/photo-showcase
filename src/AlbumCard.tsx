@@ -5,14 +5,14 @@ import AlbumImportForm from "./components/AlbumImportForm";
 import albumUtils from "./components/albumUtils";
 import ConfirmModal from "./components/ConfirmModal";
 import { useAlbumsStore } from "./store/albumsStore";
-import type { Album, Snack } from "./types";
+import { useUIStore } from "./store/uiStore";
+import type { Album } from "./types";
 
 interface AlbumCardProps {
 	album: Album;
-	setSnack: React.Dispatch<React.SetStateAction<Snack | null>>;
 }
 
-const AlbumCard = ({ album, setSnack }: AlbumCardProps) => {
+const AlbumCard = ({ album }: AlbumCardProps) => {
 	const updateAlbum = useAlbumsStore((s) => s.updateAlbum);
 	const removeAlbum = useAlbumsStore((s) => s.removeAlbum);
 	const [newTitle, setNewTitle] = useState(album.title);
@@ -22,6 +22,7 @@ const AlbumCard = ({ album, setSnack }: AlbumCardProps) => {
 	const [showImportMoreModal, setShowImportMoreModal] = useState(false);
 	const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
 	const menuRef = useRef<HTMLDivElement | null>(null);
+	const showSnack = useUIStore((s) => s.showSnack);
 
 	useEffect(() => {
 		const handleClickOutside = (e: MouseEvent) => {
@@ -214,7 +215,6 @@ const AlbumCard = ({ album, setSnack }: AlbumCardProps) => {
 							openType="existing"
 							albumId={album.id}
 							onCancel={() => setShowImportMoreModal(false)}
-							setSnack={setSnack}
 						/>
 					}
 				/>
@@ -226,13 +226,12 @@ const AlbumCard = ({ album, setSnack }: AlbumCardProps) => {
 					cancelLabel="Cancel"
 					onConfirm={() => {
 						removeAlbum(album.id);
-						setSnack({
+						showSnack({
 							type: "success",
 							message: "Album deleted: ",
 							actionLabel: "Undo",
 							onAction: () => useAlbumsStore.getState().restoreAlbum(album),
 						});
-
 						setContextMenuOpen(false);
 					}}
 					onCancel={() => {

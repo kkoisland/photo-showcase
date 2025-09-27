@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Photo, SortKey, SortOrder, UIState } from "../types";
+import type { Photo, Snack, SortKey, SortOrder, UIState } from "../types";
 import { initialUIState } from "../types";
 
 interface UIStore extends UIState {
@@ -12,6 +12,9 @@ interface UIStore extends UIState {
 	reset: () => void;
 	replaceAll: (photos: Photo[]) => void;
 	mergeById: (photos: Photo[]) => void;
+	snack: Snack | null;
+	showSnack: (snack: Snack) => void;
+	clearSnack: () => void;
 }
 
 export const useUIStore = create<UIStore>((set, get) => ({
@@ -32,4 +35,7 @@ export const useUIStore = create<UIStore>((set, get) => ({
 		];
 		set({ photos: merged });
 	},
+	snack: null,
+	showSnack: (snack) => set({ snack }),
+	clearSnack: () => set({ snack: null }),
 }));

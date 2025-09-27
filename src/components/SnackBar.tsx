@@ -1,25 +1,19 @@
-import { useEffect, useState } from "react";
-import type { Snack } from "../types";
+import { useEffect } from "react";
+import { useUIStore } from "../store/uiStore";
 
-interface SnackBarProps {
-	snack: Snack;
-}
-
-const SnackBar = ({ snack }: SnackBarProps) => {
-	const [visible, setVisible] = useState(true);
+const SnackBar = () => {
+	const snack = useUIStore((s) => s.snack);
+	const clearSnack = useUIStore((s) => s.clearSnack);
 
 	// biome-ignore lint: false positive
 	useEffect(() => {
-		setVisible(true);
-		const timer = setTimeout(() => setVisible(false), 5000);
+		const timer = setTimeout(() => clearSnack(), 5000);
 		return () => clearTimeout(timer);
-	}, [snack]);
-
-	if (!visible) return null;
+	}, [snack, clearSnack]);
 
 	let styles = "";
 
-	switch (snack.type) {
+	switch (snack?.type) {
 		case "success":
 			styles = "bg-green-100 text-green-800";
 			break;
@@ -38,8 +32,8 @@ const SnackBar = ({ snack }: SnackBarProps) => {
 		<div
 			className={`fixed bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded shadow ${styles}`}
 		>
-			<span>{snack.message}</span>
-			{snack.actionLabel && snack.onAction && (
+			<span>{snack?.message}</span>
+			{snack?.actionLabel && snack?.onAction && (
 				<button
 					type="button"
 					onClick={snack.onAction}

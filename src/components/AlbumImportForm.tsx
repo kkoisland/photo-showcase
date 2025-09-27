@@ -1,15 +1,15 @@
 import { useState } from "react";
-import type { Snack } from "../types";
+import { useUIStore } from "../store/uiStore";
 import albumUtils from "./albumUtils";
 
 interface Props {
 	openType: "new" | "existing";
 	albumId: string;
 	onCancel: () => void;
-	setSnack?: React.Dispatch<React.SetStateAction<Snack | null>>;
 }
-const AlbumImportForm = ({ openType, albumId, onCancel, setSnack }: Props) => {
+const AlbumImportForm = ({ openType, albumId, onCancel }: Props) => {
 	const [title, setTitle] = useState("no title");
+	const showSnack = useUIStore((s) => s.showSnack);
 	const handleFileImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = Array.from(e.target.files ?? []);
 		if (files.length === 0) return;
@@ -19,16 +19,16 @@ const AlbumImportForm = ({ openType, albumId, onCancel, setSnack }: Props) => {
 
 		onCancel();
 
-		if (skippedInvalidFiles.length > 0 && setSnack) {
+		if (skippedInvalidFiles.length > 0) {
 			const names = skippedInvalidFiles.map((f) => f.name).join(", ");
-			setSnack({
+			showSnack({
 				type: "warning",
 				message: `${skippedInvalidFiles.length} invalid files skipped: ${names}`,
 			});
 		}
-		if (duplicateFiles.length > 0 && setSnack) {
+		if (duplicateFiles.length > 0) {
 			const names = duplicateFiles.map((f) => f.name).join(", ");
-			setSnack({
+			showSnack({
 				type: "info",
 				message: `${duplicateFiles.length} duplicate files ignored: ${names}`,
 			});
