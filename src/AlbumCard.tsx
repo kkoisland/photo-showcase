@@ -39,6 +39,14 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 		};
 	}, [contextMenuOpen]);
 
+	const handleCopyToClipboard = async (sharedUrl: string) => {
+		try {
+			return await navigator.clipboard.writeText(sharedUrl);
+		} catch (e) {
+			console.error("Clipboard copy failed", e);
+		}
+	};
+
 	return (
 		<>
 			<div className="album-card">
@@ -95,17 +103,27 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 							type="button"
 							onClick={(e) => {
 								e.preventDefault();
-								if (album.shared) {
-									// TODO: 共有リンク表示モーダル＋コピー機能
-									alert(`共有リンク: https://example.com/albums/${album.id}`);
-								} else {
-									updateAlbum({ ...album, shared: true });
-									alert("このアルバムを共有しました");
+								const sharedUrl = album.shared
+									? album.sharedUrl
+									: `https://example.com/albums/${album.id}`;
+								if (sharedUrl) handleCopyToClipboard(sharedUrl);
+								showSnack({
+									type: "info",
+									message: album.shared
+										? "Link copied to clipboard"
+										: "Album shared and link copied to clipboard",
+								});
+								if (!album.shared) {
+									updateAlbum({
+										...album,
+										shared: true,
+										sharedUrl,
+									});
 								}
 							}}
 							className="underline text-blue-600"
 						>
-							{album.shared ? "共有中" : "共有なし"}
+							{album.shared ? "Shared" : "Not shared"}
 						</button>
 						<button
 							type="button"

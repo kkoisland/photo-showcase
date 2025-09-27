@@ -18,6 +18,7 @@ export interface Album {
 	coverUrl?: string;
 	count?: number;
 	shared?: boolean;
+	sharedUrl?: string;
 	updatedAt?: string;
 	createdAt: string;
 	startDate?: string;
