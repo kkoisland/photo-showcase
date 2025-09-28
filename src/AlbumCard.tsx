@@ -67,13 +67,13 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					</div>
 					<div className="font-bold w-52 line-clamp-2 mt-2">{album.title}</div>
 				</Link>
-				<div className="flex items-center gap-2 text-sm opacity-80 mb-2">
+				<div className="flex items-center text-sm opacity-80">
 					<span>
 						{album.startDate && album.endDate
 							? `${album.startDate}〜${album.endDate}`
 							: album.startDate
 								? album.startDate
-								: "日付未設定"}
+								: "No date set"}
 					</span>
 					<button
 						type="button"
@@ -81,6 +81,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 							e.preventDefault();
 							setIsDateEditorOpen(true);
 						}}
+						className="underline text-blue-600 ml-2"
 					>
 						Edit date
 					</button>
@@ -91,7 +92,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					}}
 				>
 					<div className="flex items-center text-sm mb-2 relative">
-						<span>{album.photoIds?.length ?? 0} 個のファイル</span>
+						<span>{album.photoIds?.length ?? 0} files</span>
 						<button
 							type="button"
 							onClick={(e) => {
@@ -114,7 +115,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 									});
 								}
 							}}
-							className="underline text-blue-600"
+							className="underline text-blue-600 ml-2"
 						>
 							{album.shared ? "Shared" : "Not shared"}
 						</button>

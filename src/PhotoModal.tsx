@@ -1,12 +1,15 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
+import SnackBar from "./components/SnackBar";
 import { useAlbumsStore } from "./store/albumsStore";
 import { usePhotosStore } from "./store/photosStore";
+import { useUIStore } from "./store/uiStore";
 
 const PhotoModal = () => {
 	const { photoId } = useParams<{ photoId: string }>();
 	const allPhotos = usePhotosStore((s) => s.photos);
 	const navigate = useNavigate();
 	const removePhoto = usePhotosStore((s) => s.removePhoto);
+	const showSnack = useUIStore((s) => s.showSnack);
 
 	// Sort date ascending
 	const sortedPhotos = [...allPhotos].sort((a, b) =>
@@ -31,6 +34,10 @@ const PhotoModal = () => {
 	}
 	const handleDelete = () => {
 		removePhoto(photo.id);
+		showSnack({
+			type: "success",
+			message: "Photo deleted",
+		});
 		if (nextPhoto) navigate(`/photos/${nextPhoto.id}`);
 		else if (prevPhoto) navigate(`/photos/${prevPhoto.id}`);
 		else navigate(`/albums/${photo.albumId}`);
@@ -41,6 +48,10 @@ const PhotoModal = () => {
 		const album = albums.find((a) => a.id === photo.albumId);
 		if (!album) return;
 		updateAlbum({ ...album, coverUrl: photo.url });
+		showSnack({
+			type: "success",
+			message: "Photo set as album cover",
+		});
 	};
 
 	return (
@@ -48,12 +59,12 @@ const PhotoModal = () => {
 			<div className="absolute top-5 right-5 flex items-center gap-4 text-white text-sm">
 				<span>
 					<button type="button" onClick={handleDelete}>
-						削除
+						Delete
 					</button>
 				</span>
 				<span>
 					<button type="button" onClick={handleCoverUrl}>
-						アルバムカバーに設定
+						Set as album cover
 					</button>
 				</span>
 				<button
@@ -98,6 +109,7 @@ const PhotoModal = () => {
 					›
 				</Link>
 			)}
+			<SnackBar />
 		</div>
 	);
 };
