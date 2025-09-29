@@ -14,10 +14,17 @@ interface AlbumsState {
 export const useAlbumsStore = create<AlbumsState>((set) => ({
 	albums: [],
 	setAlbums: (albums) => set({ albums }),
-	addAlbum: (album) => set((s) => ({ albums: [...s.albums, album] })),
+	addAlbum: (album) =>
+		set((s) => ({
+			albums: [...s.albums, { ...album, count: album.photoIds?.length ?? 0 }],
+		})),
 	updateAlbum: (album) =>
 		set((s) => ({
-			albums: s.albums.map((a) => (a.id === album.id ? { ...a, ...album } : a)),
+			albums: s.albums.map((a) =>
+				a.id === album.id
+					? { ...a, ...album, count: album.photoIds?.length ?? 0 }
+					: a,
+			),
 		})),
 	removeAlbum: (id) =>
 		set((s) => ({
@@ -30,6 +37,7 @@ export const useAlbumsStore = create<AlbumsState>((set) => ({
 					? {
 							...a,
 							photoIds: [...a.photoIds, ...photoIds],
+							count: a.photoIds.length + photoIds.length,
 							updatedAt: new Date().toISOString(),
 						}
 					: a,

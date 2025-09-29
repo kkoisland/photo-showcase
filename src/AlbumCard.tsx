@@ -92,7 +92,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					}}
 				>
 					<div className="flex items-center text-sm mb-2 relative">
-						<span>{album.photoIds?.length ?? 0} files</span>
+						<span>{album.count ?? 0} files</span>
 						<button
 							type="button"
 							onClick={(e) => {
