@@ -26,7 +26,7 @@ const PhotoModal = () => {
 
 	if (!photo) {
 		return (
-			<div className="p-5 text-white">
+			<div className="p-5">
 				<p>Photo not found.</p>
 				<Link to="/">← Back to Albums</Link>
 			</div>
