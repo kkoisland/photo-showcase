@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useUIStore } from "../store/uiStore";
 import albumUtils from "./albumUtils";
 
@@ -8,6 +8,7 @@ interface Props {
 	onCancel: () => void;
 }
 const AlbumImportForm = ({ openType, albumId, onCancel }: Props) => {
+	const inputId = useId();
 	const [title, setTitle] = useState("no title");
 	const showSnack = useUIStore((s) => s.showSnack);
 	const handleFileImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,23 +47,30 @@ const AlbumImportForm = ({ openType, albumId, onCancel }: Props) => {
 		<div>
 			{openType === "new" && (
 				<label className="block mb-1 text-sm font-medium">
-					Album title
+					Enter album title
 					<input
 						type="text"
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
-						placeholder="Enter album title"
-						className="border rounded px-2 py-1 mb-4 w-full"
+						className="border rounded px-2 py-1 mb-4 w-full bg-white text-black dark:bg-gray-700 dark:text-white"
 					/>
 				</label>
 			)}
+
 			<label className="block mb-1 text-sm font-medium">
 				Select photos or videos
+				<div className="border rounded px-2 py-1 w-full cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600">
+					<span className="text-gray-700 text-sm dark:text-gray-200">
+						Choose files...
+					</span>
+				</div>
 				<input
+					id={inputId}
 					type="file"
 					accept=".jpg,.jpeg,.png,.mp4,.mov"
 					multiple
 					onChange={handleFileImport}
+					className="hidden"
 				/>
 			</label>
 		</div>
