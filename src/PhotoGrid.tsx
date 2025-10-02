@@ -31,7 +31,7 @@ const PhotoGrid = () => {
 				{album ? album?.title : "Photos in Album"}
 			</h1>
 			{album?.sharedUrl && (
-				<div className="mb-2">
+				<div className="mb-4">
 					<span>Shared Link: </span>
 					<button
 						type="button"

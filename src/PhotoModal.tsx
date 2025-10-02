@@ -55,8 +55,8 @@ const PhotoModal = () => {
 	};
 
 	return (
-		<div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
-			<div className="absolute top-5 right-5 flex items-center gap-4 text-white text-sm">
+		<div className="fixed inset-0 bg-white dark:bg-black/90 flex items-center justify-center z-50">
+			<div className="absolute top-5 right-5 flex items-center gap-4 text-black dark:text-white">
 				<span>
 					<button type="button" onClick={handleDelete}>
 						Delete

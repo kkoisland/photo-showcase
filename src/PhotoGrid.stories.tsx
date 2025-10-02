@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import PhotoGrid from "./PhotoGrid";
+import { useAlbumsStore } from "./store/albumsStore";
 import { usePhotosStore } from "./store/photosStore";
 import type { Photo } from "./types";
 
@@ -11,6 +12,18 @@ const meta: Meta<typeof PhotoGrid> = {
 		(Story, context) => {
 			const { photos } = context.args as { photos: Photo[] };
 			usePhotosStore.setState({ photos });
+			useAlbumsStore.setState({
+				albums: [
+					{
+						id: "a1",
+						title: "Shared Album",
+						shared: true,
+						sharedUrl: "https://example.com/albums/a1",
+						photoIds: [],
+						createdAt: "",
+					},
+				],
+			});
 			return (
 				<MemoryRouter initialEntries={["/albums/a1"]}>
 					<Routes>
