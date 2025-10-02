@@ -23,7 +23,7 @@ const ConfirmModal = ({
 		>
 			{/* biome-ignore lint: false positive */}
 			<div
-				className="bg-white dark:bg-gray-800 p-4 rounded shadow w-80"
+				className="bg-white p-4 rounded shadow w-80"
 				onClick={(e) => e.stopPropagation()} // Do not close when click inside
 			>
 				<p className="mb-4 font-bold">{title}</p>
@@ -32,7 +32,7 @@ const ConfirmModal = ({
 					{cancelLabel && (
 						<button
 							type="button"
-							className="px-3 py-1 bg-gray-300 dark:bg-gray-600 rounded"
+							className="px-3 py-1 bg-gray-300 rounded"
 							onClick={onCancel}
 						>
 							{cancelLabel}

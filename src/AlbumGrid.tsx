@@ -11,14 +11,14 @@ const AlbumGrid = () => {
 	const [showDialog, setShowDialog] = useState(false);
 	const newAlbumId = uuid();
 	return (
-		<div style={{ padding: 20 }}>
+		<div className="min-h-screen p-5 bg-white text-black">
 			<div className="flex items-center mb-4">
-				<h1 className="text-2xl font-bold">Albums</h1>
+				<h1 className="text-2xl font-bold text-gray-900">Albums</h1>
 				<div className="ml-2">
 					<button
 						type="button"
 						onClick={() => setShowDialog(true)}
-						className="px-3 py-1 rounded"
+						className="px-3 py-1 rounded bg-white text-black"
 					>
 						Import new album
 					</button>

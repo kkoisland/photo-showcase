@@ -27,7 +27,7 @@ const AlbumDateEditor = ({ album, onClose }: EditorProps) => {
 			onConfirm={handleSave}
 			description={
 				<>
-					<p className="mb-2 text-sm text-gray-600 dark:text-gray-300">
+					<p className="mb-2 text-sm text-gray-600">
 						Please enter either a start date only, or both a start and end date.
 					</p>
 					<label className="block mb-2 text-sm">
@@ -36,7 +36,7 @@ const AlbumDateEditor = ({ album, onClose }: EditorProps) => {
 							type="date"
 							value={startDate}
 							onChange={(e) => setStartDate(e.target.value)}
-							className="border rounded p-1 w-full mt-1 bg-white dark:bg-gray-700 dark:text-white"
+							className="border rounded p-1 w-full mt-1 bg-white"
 						/>
 					</label>
 					<label className="block mb-4 text-sm">
@@ -45,7 +45,7 @@ const AlbumDateEditor = ({ album, onClose }: EditorProps) => {
 							type="date"
 							value={endDate}
 							onChange={(e) => setEndDate(e.target.value)}
-							className="border rounded p-1 w-full mt-1 bg-white dark:bg-gray-700 dark:text-white"
+							className="border rounded p-1 w-full mt-1 bg-white"
 						/>
 					</label>
 				</>
