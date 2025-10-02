@@ -42,7 +42,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 
 	return (
 		<>
-			<div className="album-card">
+			<div className="album-card mb-4">
 				<Link to={`/albums/${album.id}`}>
 					<div
 						key={album.id}
@@ -67,8 +67,8 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					</div>
 					<div className="font-bold w-52 line-clamp-2 mt-2">{album.title}</div>
 				</Link>
-				<div className="flex items-center text-sm opacity-80">
-					<span>
+				<div className="flex items-center opacity-80">
+					<span className="truncate overflow-hidden whitespace-nowrap">
 						{album.startDate && album.endDate
 							? `${album.startDate}〜${album.endDate}`
 							: album.startDate
@@ -81,111 +81,105 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 							e.preventDefault();
 							setIsDateEditorOpen(true);
 						}}
-						className="underline text-blue-600 ml-2"
+						className=" text-blue-600 ml-0.5 cursor-pointer text-sm"
 					>
-						Edit date
+						🖋️
 					</button>
 				</div>
-				<div
-					style={{
-						fontSize: "0.9em",
-					}}
-				>
-					<div className="flex items-center text-sm mb-2 relative">
-						<span>{album.count ?? 0} files</span>
-						<button
-							type="button"
-							onClick={(e) => {
-								e.preventDefault();
-								const sharedUrl = album.shared
-									? album.sharedUrl
-									: `https://example.com/albums/${album.id}`;
-								if (sharedUrl) handleCopyToClipboard(sharedUrl);
-								showSnack({
-									type: "info",
-									message: album.shared
-										? "Link copied to clipboard"
-										: "Album shared and link copied to clipboard",
+				<div className="flex items-center mb-2 relative">
+					<span>{album.count ?? 0} files</span>
+					<button
+						type="button"
+						onClick={(e) => {
+							e.preventDefault();
+							const sharedUrl = album.shared
+								? album.sharedUrl
+								: `https://example.com/albums/${album.id}`;
+							if (sharedUrl) handleCopyToClipboard(sharedUrl);
+							showSnack({
+								type: "info",
+								message: album.shared
+									? "Link copied to clipboard"
+									: "Album shared and link copied to clipboard",
+							});
+							if (!album.shared) {
+								updateAlbum({
+									...album,
+									shared: true,
+									sharedUrl,
 								});
-								if (!album.shared) {
-									updateAlbum({
-										...album,
-										shared: true,
-										sharedUrl,
-									});
-								}
+							}
+						}}
+						className="underline text-blue-600 ml-2 cursor-pointer"
+					>
+						{album.shared ? "Shared" : "Not shared"}
+					</button>
+					<button
+						type="button"
+						onClick={(e) => {
+							e.preventDefault();
+							setContextMenuOpen((prev) => !prev);
+						}}
+						className="ml-2 px-2 cursor-pointer"
+					>
+						⋮
+					</button>
+					{contextMenuOpen && (
+						<div
+							ref={menuRef}
+							style={{
+								position: "absolute",
+								top: "100%",
+								right: 0,
+								borderRadius: 4,
+								boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+								padding: "8px 0",
+								backgroundColor: "#fff",
 							}}
-							className="underline text-blue-600 ml-2"
 						>
-							{album.shared ? "Shared" : "Not shared"}
-						</button>
-						<button
-							type="button"
-							onClick={(e) => {
-								e.preventDefault();
-								setContextMenuOpen((prev) => !prev);
-							}}
-							className="ml-2"
-						>
-							⋮
-						</button>
-						{contextMenuOpen && (
-							<div
-								ref={menuRef}
-								style={{
-									position: "absolute",
-									top: "100%",
-									right: 0,
-									borderRadius: 4,
-									boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-									padding: "8px 0",
-									backgroundColor: "#fff",
+							<button
+								type="button"
+								style={{ padding: "4px 12px", cursor: "pointer" }}
+								onClick={() => {
+									setContextMenuOpen(false);
+									setShowRenameModal(true);
 								}}
 							>
+								Rename album
+							</button>
+							<div>
 								<button
 									type="button"
 									style={{ padding: "4px 12px", cursor: "pointer" }}
 									onClick={() => {
+										setShowImportMoreModal(true);
 										setContextMenuOpen(false);
-										setShowRenameModal(true);
 									}}
 								>
-									Rename album
+									Import more photos
 								</button>
-								<div>
-									<button
-										type="button"
-										style={{ padding: "4px 12px", cursor: "pointer" }}
-										onClick={() => {
-											setShowImportMoreModal(true);
-											setContextMenuOpen(false);
-										}}
-									>
-										Import more photos
-									</button>
-								</div>
-								<div>
-									<button
-										type="button"
-										style={{ padding: "4px 12px", cursor: "pointer" }}
-										onClick={() => {
-											albumUtils.exportAlbum(album.id);
-											setContextMenuOpen(false);
-										}}
-									>
-										Export
-									</button>
-								</div>
+							</div>
+							<div>
 								<button
 									type="button"
 									style={{ padding: "4px 12px", cursor: "pointer" }}
-									onClick={() => setShowRemoveConfirm(true)}
+									onClick={() => {
+										albumUtils.exportAlbum(album.id);
+										setContextMenuOpen(false);
+									}}
 								>
-									Delete this album
+									Export
 								</button>
 							</div>
-						)}
-					</div>
+							<button
+								type="button"
+								style={{ padding: "4px 12px", cursor: "pointer" }}
+								onClick={() => setShowRemoveConfirm(true)}
+							>
+								Delete this album
+							</button>
+						</div>
+					)}
 				</div>
 			</div>
 			{isDateEditorOpen && (
