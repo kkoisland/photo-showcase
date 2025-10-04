@@ -1,5 +1,11 @@
 const Footer = () => {
-	return <footer>© 2025 Keiko Higuchi</footer>;
+	return (
+		<footer
+			style={{ backgroundColor: "var(--bg-color)", color: "var(--text-color)" }}
+		>
+			© 2025 Keiko Higuchi
+		</footer>
+	);
 };
 
 export default Footer;

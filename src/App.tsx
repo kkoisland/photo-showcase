@@ -1,8 +1,16 @@
+import { useEffect } from "react";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import AppRoutes from "./routes";
+import { useUIStore } from "./store/uiStore";
 
-export default function App() {
+const App = () => {
+	const { theme } = useUIStore();
+
+	useEffect(() => {
+		document.documentElement.classList.toggle("dark", theme === "dark");
+	}, [theme]);
+
 	return (
 		<>
 			<Header />
@@ -10,4 +18,5 @@ export default function App() {
 			<Footer />
 		</>
 	);
-}
+};
+export default App;

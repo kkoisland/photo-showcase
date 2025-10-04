@@ -15,6 +15,7 @@ interface UIStore extends UIState {
 	snack: Snack | null;
 	showSnack: (snack: Snack) => void;
 	clearSnack: () => void;
+	toggleTheme: () => void;
 }
 
 export const useUIStore = create<UIStore>((set, get) => ({
@@ -38,4 +39,8 @@ export const useUIStore = create<UIStore>((set, get) => ({
 	snack: null,
 	showSnack: (snack) => set({ snack }),
 	clearSnack: () => set({ snack: null }),
+	toggleTheme: () =>
+		set((state) => ({
+			theme: state.theme === "light" ? "dark" : "light",
+		})),
 }));

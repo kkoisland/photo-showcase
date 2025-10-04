@@ -23,7 +23,7 @@ const ConfirmModal = ({
 		>
 			{/* biome-ignore lint: false positive */}
 			<div
-				className="bg-white p-4 rounded shadow w-80"
+				className="p-4 rounded shadow w-80"
 				onClick={(e) => e.stopPropagation()} // Do not close when click inside
 			>
 				<p className="mb-4 font-bold">{title}</p>

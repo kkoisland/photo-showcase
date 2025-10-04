@@ -52,7 +52,7 @@ const AlbumImportForm = ({ openType, albumId, onCancel }: Props) => {
 						type="text"
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
-						className="border rounded px-2 py-1 mb-4 w-full bg-white text-black"
+						className="border rounded px-2 py-1 mb-4 w-full"
 					/>
 				</label>
 			)}

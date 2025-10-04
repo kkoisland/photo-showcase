@@ -41,6 +41,7 @@ export interface UIState {
 	sort: { key: SortKey; order: SortOrder };
 	lightbox: LightboxState;
 	view: "grid" | "detail";
+	theme: "light" | "dark";
 }
 
 export const initialUIState: UIState = {
@@ -51,6 +52,7 @@ export const initialUIState: UIState = {
 	sort: { key: "createdAt", order: "desc" },
 	lightbox: { isOpen: false, photoId: null },
 	view: "grid",
+	theme: "light",
 };
 
 export interface Snack {

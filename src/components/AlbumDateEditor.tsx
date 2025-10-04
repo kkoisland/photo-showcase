@@ -36,7 +36,7 @@ const AlbumDateEditor = ({ album, onClose }: EditorProps) => {
 							type="date"
 							value={startDate}
 							onChange={(e) => setStartDate(e.target.value)}
-							className="border rounded p-1 w-full mt-1 bg-white"
+							className="border rounded p-1 w-full mt-1"
 						/>
 					</label>
 					<label className="block mb-4 text-sm">
@@ -45,7 +45,7 @@ const AlbumDateEditor = ({ album, onClose }: EditorProps) => {
 							type="date"
 							value={endDate}
 							onChange={(e) => setEndDate(e.target.value)}
-							className="border rounded p-1 w-full mt-1 bg-white"
+							className="border rounded p-1 w-full mt-1"
 						/>
 					</label>
 				</>
