@@ -18,12 +18,12 @@ const ConfirmModal = ({
 	return (
 		// biome-ignore lint: false positive
 		<div
-			className="fixed inset-0 flex items-center justify-center bg-black/50"
+			className="fixed inset-0 flex items-center justify-center modal-backdrop"
 			onClick={onCancel} // Close when click outside
 		>
 			{/* biome-ignore lint: false positive */}
 			<div
-				className="p-4 rounded shadow w-80"
+				className="p-4 rounded shadow w-80 modal-content"
 				onClick={(e) => e.stopPropagation()} // Do not close when click inside
 			>
 				<p className="mb-4 font-bold">{title}</p>
@@ -32,7 +32,7 @@ const ConfirmModal = ({
 					{cancelLabel && (
 						<button
 							type="button"
-							className="px-3 py-1 bg-gray-300 rounded"
+							className="px-3 py-1 rounded button-bg"
 							onClick={onCancel}
 						>
 							{cancelLabel}
@@ -41,7 +41,7 @@ const ConfirmModal = ({
 					{confirmLabel && (
 						<button
 							type="button"
-							className="px-3 py-1 bg-red-500 text-white rounded"
+							className="px-3 py-1 rounded confirm-button-bg"
 							onClick={onConfirm}
 						>
 							{confirmLabel}

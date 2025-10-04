@@ -55,7 +55,7 @@ const PhotoModal = () => {
 	};
 
 	return (
-		<div className="fixed inset-0 flex items-center justify-center z-50">
+		<div className="fixed inset-0 flex items-center justify-center modal-overlay">
 			<div className="absolute top-5 right-5 flex items-center gap-4">
 				<span>
 					<button type="button" onClick={handleDelete}>
@@ -79,7 +79,7 @@ const PhotoModal = () => {
 			{prevPhoto && (
 				<Link
 					to={`/photos/${prevPhoto.id}`}
-					className="absolute left-5 text-white text-3xl select-none"
+					className="absolute left-5 text-3xl select-none"
 				>
 					‹
 				</Link>
@@ -104,7 +104,7 @@ const PhotoModal = () => {
 			{nextPhoto && (
 				<Link
 					to={`/photos/${nextPhoto.id}`}
-					className="absolute right-5 text-white text-3xl select-none"
+					className="absolute right-5 text-3xl select-none"
 				>
 					›
 				</Link>

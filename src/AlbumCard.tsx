@@ -81,7 +81,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 							e.preventDefault();
 							setIsDateEditorOpen(true);
 						}}
-						className=" text-blue-600 ml-0.5 cursor-pointer text-sm"
+						className="ml-1 cursor-pointer text-sm"
 					>
 						🖋️
 					</button>
@@ -110,7 +110,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 								});
 							}
 						}}
-						className="underline text-blue-600 ml-2 cursor-pointer"
+						className="underline ml-2 cursor-pointer link-accent"
 					>
 						{album.shared ? "Shared" : "Not shared"}
 					</button>
@@ -127,15 +127,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					{contextMenuOpen && (
 						<div
 							ref={menuRef}
-							style={{
-								position: "absolute",
-								top: "100%",
-								right: 0,
-								borderRadius: 4,
-								boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-								padding: "8px 0",
-								backgroundColor: "#fff",
-							}}
+							className="absolute top-full right-0 context-menu"
 						>
 							<button
 								type="button"

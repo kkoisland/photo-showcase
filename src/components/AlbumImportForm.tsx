@@ -59,8 +59,8 @@ const AlbumImportForm = ({ openType, albumId, onCancel }: Props) => {
 
 			<label className="block mb-1 text-sm font-medium">
 				Select photos or videos
-				<div className="border rounded px-2 py-1 w-full cursor-pointer bg-gray-50 hover:bg-gray-100">
-					<span className="text-gray-700 text-sm">Choose files...</span>
+				<div className="border rounded px-2 py-1 w-full cursor-pointer surface-bg">
+					<span className="text-sm">Choose files...</span>
 				</div>
 				<input
 					id={inputId}

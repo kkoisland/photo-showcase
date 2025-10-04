@@ -27,7 +27,7 @@ const AlbumDateEditor = ({ album, onClose }: EditorProps) => {
 			onConfirm={handleSave}
 			description={
 				<>
-					<p className="mb-2 text-sm text-gray-600">
+					<p className="mb-2 text-sm">
 						Please enter either a start date only, or both a start and end date.
 					</p>
 					<label className="block mb-2 text-sm">

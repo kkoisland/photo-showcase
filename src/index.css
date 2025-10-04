@@ -1,5 +1,37 @@
 @import "tailwindcss";
 
+:root {
+	--bg-color: #ffffff;
+	--text-color: #222222;
+	--surface-bg: #f5f5f5;
+	--border-color: #dddddd;
+	--accent-color: #0078d4;
+	--confirm-bg: #e0e0e0;
+	--calendar-filter: invert(0);
+	--surface-hover-bg: #e5e5e5;
+	--button-bg: #e5e7eb;
+}
+
+.dark {
+	--bg-color: #1e1e1e;
+	--text-color: #f1f1f1;
+	--surface-bg: #2a2a2a;
+	--border-color: #444444;
+	--accent-color: #3399ff;
+	--confirm-bg: #555555;
+	--calendar-filter: invert(1);
+	--surface-hover-bg: #3a3a3a;
+	--button-bg: #444444;
+}
+
+body {
+	background-color: var(--bg-color);
+	color: var(--text-color);
+	transition:
+		background-color 0.2s ease,
+		color 0.2s ease;
+}
+
 .my-masonry-grid {
 	display: flex;
 	margin-left: -4px;
@@ -14,26 +46,47 @@
 	display: block;
 }
 
-:root {
-	--bg-color: #ffffff;
-	--text-color: #222222;
-	--card-bg: #f5f5f5;
-	--border-color: #dddddd;
-	--accent-color: #0078d4;
+.surface-bg {
+	background-color: var(--surface-bg);
 }
 
-.dark {
-	--bg-color: #1e1e1e;
-	--text-color: #f1f1f1;
-	--card-bg: #2a2a2a;
-	--border-color: #444444;
-	--accent-color: #3399ff;
+.surface-bg:hover {
+	background-color: var(--surface-hover-bg);
 }
 
-body {
-	background-color: var(--bg-color);
+.button-bg {
+	background-color: var(--button-bg);
+}
+
+.confirm-button-bg {
+	background-color: var(--confirm-bg);
+}
+
+.link-accent {
+	color: var(--accent-color);
+	text-decoration: underline;
+}
+
+.context-menu {
+	background-color: var(--surface-bg);
 	color: var(--text-color);
-	transition:
-		background-color 0.2s ease,
-		color 0.2s ease;
+	border-radius: 4px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+	padding: 8px 0;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+	filter: var(--calendar-filter);
+}
+
+.modal-content {
+	background-color: var(--surface-bg);
+}
+
+.modal-backdrop {
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-overlay {
+	background-color: var(--bg-color);
 }
