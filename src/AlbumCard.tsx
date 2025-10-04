@@ -223,6 +223,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					title="Delete this album?"
 					confirmLabel="Delete"
 					cancelLabel="Cancel"
+					danger
 					onConfirm={() => {
 						removeAlbum(album.id);
 						showSnack({

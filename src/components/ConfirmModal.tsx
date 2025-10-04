@@ -5,6 +5,7 @@ interface ConfirmModalProps {
 	onConfirm?: () => void;
 	onCancel?: () => void;
 	description?: React.ReactNode;
+	danger?: boolean;
 }
 
 const ConfirmModal = ({
@@ -14,6 +15,7 @@ const ConfirmModal = ({
 	onConfirm,
 	onCancel,
 	description,
+	danger = false,
 }: ConfirmModalProps) => {
 	return (
 		// biome-ignore lint: false positive
@@ -41,7 +43,9 @@ const ConfirmModal = ({
 					{confirmLabel && (
 						<button
 							type="button"
-							className="px-3 py-1 rounded confirm-button-bg"
+							className={`px-3 py-1 rounded ${
+								danger ? "danger-confirm-button" : "confirm-button-bg"
+							}`}
 							onClick={onConfirm}
 						>
 							{confirmLabel}
