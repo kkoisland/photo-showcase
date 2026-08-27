@@ -79,16 +79,18 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 								? album.startDate
 								: "No date set"}
 					</span>
-					<button
-						type="button"
-						onClick={(e) => {
-							e.preventDefault();
-							setIsDateEditorOpen(true);
-						}}
-						className="ml-1 cursor-pointer text-sm"
-					>
-						🖋️
-					</button>
+					{import.meta.env.DEV && (
+						<button
+							type="button"
+							onClick={(e) => {
+								e.preventDefault();
+								setIsDateEditorOpen(true);
+							}}
+							className="ml-1 cursor-pointer text-sm"
+						>
+							🖋️
+						</button>
+					)}
 				</div>
 				<div className="flex items-center mb-2 relative">
 					<span>{count} files</span>
@@ -118,17 +120,19 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					>
 						{album.shared ? "Shared" : "Not shared"}
 					</button>
-					<button
-						type="button"
-						onClick={(e) => {
-							e.preventDefault();
-							setContextMenuOpen((prev) => !prev);
-						}}
-						className="ml-2 px-2 cursor-pointer"
-					>
-						⋮
-					</button>
-					{contextMenuOpen && (
+					{import.meta.env.DEV && (
+						<button
+							type="button"
+							onClick={(e) => {
+								e.preventDefault();
+								setContextMenuOpen((prev) => !prev);
+							}}
+							className="ml-2 px-2 cursor-pointer"
+						>
+							⋮
+						</button>
+					)}
+					{import.meta.env.DEV && contextMenuOpen && (
 						<div
 							ref={menuRef}
 							className="absolute top-full right-0 context-menu"
@@ -178,13 +182,13 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					)}
 				</div>
 			</div>
-			{isDateEditorOpen && (
+			{import.meta.env.DEV && isDateEditorOpen && (
 				<AlbumDateEditor
 					album={album}
 					onClose={() => setIsDateEditorOpen(false)}
 				/>
 			)}
-			{showRenameModal && (
+			{import.meta.env.DEV && showRenameModal && (
 				<ConfirmModal
 					title="Rename album"
 					confirmLabel="Save"
@@ -205,7 +209,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					}
 				/>
 			)}
-			{showImportMoreModal && (
+			{import.meta.env.DEV && showImportMoreModal && (
 				<ConfirmModal
 					title="Import more photos"
 					cancelLabel="Cancel"
@@ -222,7 +226,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					}
 				/>
 			)}
-			{showRemoveConfirm && (
+			{import.meta.env.DEV && showRemoveConfirm && (
 				<ConfirmModal
 					title="Delete this album?"
 					confirmLabel="Delete"

@@ -14,15 +14,17 @@ const AlbumGrid = () => {
 		<div className="min-h-screen p-5">
 			<div className="flex items-center mb-4">
 				<h1 className="text-2xl font-bold">Albums</h1>
-				<div className="ml-2">
-					<button
-						type="button"
-						onClick={() => setShowDialog(true)}
-						className="px-3 py-1 rounded"
-					>
-						Import new album
-					</button>
-				</div>
+				{import.meta.env.DEV && (
+					<div className="ml-2">
+						<button
+							type="button"
+							onClick={() => setShowDialog(true)}
+							className="px-3 py-1 rounded"
+						>
+							Import new album
+						</button>
+					</div>
+				)}
 			</div>
 
 			<div
@@ -37,7 +39,7 @@ const AlbumGrid = () => {
 				))}
 			</div>
 
-			{showDialog && (
+			{import.meta.env.DEV && showDialog && (
 				<ConfirmModal
 					title="Import Photos"
 					cancelLabel="Cancel"
