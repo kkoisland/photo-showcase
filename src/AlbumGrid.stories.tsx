@@ -2,7 +2,28 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { MemoryRouter } from "react-router-dom";
 import AlbumGrid from "./AlbumGrid";
 import { useAlbumsStore } from "./store/albumsStore";
-import type { Album } from "./types";
+import { usePhotosStore } from "./store/photosStore";
+import type { Album, Photo } from "./types";
+
+// "N files" 表示を確認するためのダミー写真をアルバムごとに生成する
+const PHOTO_COUNTS: Record<string, number> = {
+	a1: 42,
+	a2: 321,
+	a3: 8,
+	a4: 420,
+	a5: 1003,
+	a6: 8,
+};
+
+const makeDummyPhotos = (albumId: string, count: number): Photo[] =>
+	Array.from({ length: count }, (_, i) => ({
+		id: `${albumId}-p${i}`,
+		albumId,
+		title: `dummy-${i}`,
+		url: "https://picsum.photos/200",
+		type: "photo",
+		hash: `${albumId}-${i}`,
+	}));
 
 const meta: Meta<typeof AlbumGrid> = {
 	title: "Features/AlbumGrid",
@@ -12,6 +33,11 @@ const meta: Meta<typeof AlbumGrid> = {
 			const { albums } = context.args as { albums: Album[] };
 			useAlbumsStore.setState({
 				albums,
+			});
+			usePhotosStore.setState({
+				photos: albums.flatMap((a) =>
+					makeDummyPhotos(a.id, PHOTO_COUNTS[a.id] ?? 0),
+				),
 			});
 			return (
 				<MemoryRouter>
@@ -35,8 +61,6 @@ export const Default: Story = {
 				startDate: "2025-09-01",
 				endDate: "",
 				shared: true,
-				photoIds: [],
-				count: 42,
 			},
 		],
 	},
@@ -52,8 +76,6 @@ export const ThreeAlbums: Story = {
 				startDate: "2025-09-01",
 				endDate: "",
 				shared: true,
-				photoIds: [],
-				count: 42,
 			},
 			{
 				id: "a2",
@@ -62,8 +84,6 @@ export const ThreeAlbums: Story = {
 				createdAt: "",
 				startDate: "",
 				endDate: "",
-				photoIds: [],
-				count: 321,
 			},
 			{
 				id: "a3",
@@ -72,8 +92,6 @@ export const ThreeAlbums: Story = {
 				createdAt: "",
 				startDate: "2025-09-01",
 				endDate: "2025-09-15",
-				photoIds: [],
-				count: 8,
 			},
 		],
 	},
@@ -90,8 +108,6 @@ export const SixAlbums: Story = {
 				startDate: "2025-09-01",
 				endDate: "",
 				shared: true,
-				photoIds: [],
-				count: 42,
 			},
 			{
 				id: "a2",
@@ -100,8 +116,6 @@ export const SixAlbums: Story = {
 				createdAt: "",
 				startDate: "",
 				endDate: "",
-				photoIds: [],
-				count: 321,
 			},
 			{
 				id: "a3",
@@ -110,8 +124,6 @@ export const SixAlbums: Story = {
 				createdAt: "",
 				startDate: "2025-09-01",
 				endDate: "2025-09-15",
-				photoIds: [],
-				count: 8,
 			},
 			{
 				id: "a4",
@@ -121,8 +133,6 @@ export const SixAlbums: Story = {
 				startDate: "",
 				endDate: "",
 				shared: true,
-				photoIds: [],
-				count: 420,
 			},
 			{
 				id: "a5",
@@ -131,8 +141,6 @@ export const SixAlbums: Story = {
 				createdAt: "",
 				startDate: "",
 				endDate: "",
-				photoIds: [],
-				count: 1003,
 			},
 			{
 				id: "a6",
@@ -141,8 +149,6 @@ export const SixAlbums: Story = {
 				createdAt: "",
 				startDate: "2025-09-01",
 				endDate: "2025-09-15",
-				photoIds: [],
-				count: 8,
 			},
 		],
 	},

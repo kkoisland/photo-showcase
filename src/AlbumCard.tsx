@@ -6,6 +6,7 @@ import albumUtils from "./components/albumUtils";
 import ConfirmModal from "./components/ConfirmModal";
 import handleCopyToClipboard from "./components/copyToClipboard";
 import { useAlbumsStore } from "./store/albumsStore";
+import { usePhotosStore } from "./store/photosStore";
 import { useUIStore } from "./store/uiStore";
 import type { Album } from "./types";
 
@@ -17,6 +18,9 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 	const updateAlbum = useAlbumsStore((s) => s.updateAlbum);
 	const removeAlbum = useAlbumsStore((s) => s.removeAlbum);
 	const restoreAlbum = useAlbumsStore((s) => s.restoreAlbum);
+	const count = usePhotosStore(
+		(s) => s.photos.filter((p) => p.albumId === album.id).length,
+	);
 	const [newTitle, setNewTitle] = useState(album.title);
 	const [isDateEditorOpen, setIsDateEditorOpen] = useState(false);
 	const [contextMenuOpen, setContextMenuOpen] = useState(false);
@@ -87,7 +91,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					</button>
 				</div>
 				<div className="flex items-center mb-2 relative">
-					<span>{album.count ?? 0} files</span>
+					<span>{count} files</span>
 					<button
 						type="button"
 						onClick={(e) => {

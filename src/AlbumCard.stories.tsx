@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { MemoryRouter } from "react-router-dom";
 import AlbumCard from "./AlbumCard";
 import { useAlbumsStore } from "./store/albumsStore";
+import { usePhotosStore } from "./store/photosStore";
 import type { Album } from "./types";
 
 const meta: Meta<typeof AlbumCard> = {
@@ -11,6 +12,7 @@ const meta: Meta<typeof AlbumCard> = {
 		(Story, context) => {
 			const { album } = context.args as { album: Album };
 			useAlbumsStore.setState({ albums: [album] });
+			usePhotosStore.setState({ photos: [] });
 			return (
 				<MemoryRouter>
 					<Story />
@@ -31,8 +33,6 @@ export const Default: Story = {
 			startDate: "",
 			endDate: "",
 			shared: false,
-			photoIds: [],
-			count: 0,
 		},
 	},
 };
