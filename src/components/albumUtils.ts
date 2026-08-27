@@ -21,11 +21,9 @@ const importPhotos = async (
 ) => {
 	const album = useAlbumsStore.getState().albums.find((a) => a.id === albumId);
 
-	const existingPhotos = album
-		? album.photoIds.map((id) =>
-				usePhotosStore.getState().photos.find((p) => p.id === id),
-			)
-		: [];
+	const existingPhotos = usePhotosStore
+		.getState()
+		.photos.filter((p) => p.albumId === albumId);
 
 	// Allow only images and videos
 	const validFiles = files.filter((file) =>
@@ -52,7 +50,7 @@ const importPhotos = async (
 
 	// Find duplicates with existing album
 	const duplicateFiles = fileHashes
-		.filter(({ hash }) => existingPhotos.some((p) => p?.hash === hash))
+		.filter(({ hash }) => existingPhotos.some((p) => p.hash === hash))
 		.map(({ file }) => file);
 
 	// Invalid files
@@ -91,7 +89,6 @@ const importPhotos = async (
 		const newAlbum: Album = {
 			id: albumId,
 			title: albumTitle || "no album title",
-			photoIds: newPhotos.map((p) => p.id),
 			coverUrl: newPhotos[0]?.url,
 			createdAt: new Date().toISOString(),
 			updatedAt: new Date().toISOString(),
@@ -101,15 +98,8 @@ const importPhotos = async (
 			usePhotosStore.getState().addPhoto(p);
 		});
 	} else if (openType === "existing" && album) {
-		const existingPhotoIds = existingPhotos
-			.map((p) => p?.id)
-			.filter((id): id is string => Boolean(id));
-
-		const mergedPhotoIds = [...existingPhotoIds, ...newPhotos.map((p) => p.id)];
-
 		useAlbumsStore.getState().updateAlbum({
 			...album,
-			photoIds: mergedPhotoIds,
 			updatedAt: new Date().toISOString(),
 		});
 
@@ -132,9 +122,9 @@ const exportAlbum = async (albumId: string): Promise<void> => {
 	const album = useAlbumsStore.getState().albums.find((a) => a.id === albumId);
 	if (!album) return;
 
-	const photos = album.photoIds
-		.map((id) => usePhotosStore.getState().photos.find((p) => p.id === id))
-		.filter(Boolean) as Photo[];
+	const photos = usePhotosStore
+		.getState()
+		.photos.filter((p) => p.albumId === albumId);
 
 	const zip = new JSZip();
 	zip.file("album.json", JSON.stringify(album, null, 2));

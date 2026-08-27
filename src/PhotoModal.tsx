@@ -57,16 +57,20 @@ const PhotoModal = () => {
 	return (
 		<div className="fixed inset-0 flex items-center justify-center modal-overlay">
 			<div className="absolute top-5 right-5 flex items-center gap-4">
-				<span>
-					<button type="button" onClick={handleDelete}>
-						Delete
-					</button>
-				</span>
-				<span>
-					<button type="button" onClick={handleCoverUrl}>
-						Set as album cover
-					</button>
-				</span>
+				{import.meta.env.DEV && (
+					<>
+						<span>
+							<button type="button" onClick={handleDelete}>
+								Delete
+							</button>
+						</span>
+						<span>
+							<button type="button" onClick={handleCoverUrl}>
+								Set as album cover
+							</button>
+						</span>
+					</>
+				)}
 				<button
 					type="button"
 					onClick={() => navigate(`/albums/${photo.albumId}`)}
