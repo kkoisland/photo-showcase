@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import AdminApp from "./AdminApp.tsx";
+import App from "./App.tsx";
 import "./index.css";
 import { seedDummyData } from "./seedDummyData";
 
@@ -15,7 +15,7 @@ root.render(
 	<StrictMode>
 		<BrowserRouter>
 			<Routes>
-				<Route path="/*" element={<AdminApp />} />
+				<Route path="/*" element={<App />} />
 			</Routes>
 		</BrowserRouter>
 	</StrictMode>,
