@@ -18,7 +18,7 @@ const s3 = new S3Client({
 	},
 });
 
-const publicUrlFor = (key: string) =>
+export const publicUrlFor = (key: string) =>
 	`http://${bucket}.s3-website-${region}.amazonaws.com/${key}`;
 
 const objectExists = async (key: string): Promise<boolean> => {
@@ -75,6 +75,7 @@ const uploadManifest = async (manifest: {
 			Key: "manifest.json",
 			Body: JSON.stringify(manifest, null, 2),
 			ContentType: "application/json",
+			CacheControl: "no-cache",
 		}),
 	);
 };

@@ -8,7 +8,7 @@ import { usePhotosStore } from "./store/photosStore";
 
 async function loadManifest() {
 	try {
-		const res = await fetch("/manifest.json");
+		const res = await fetch("/manifest.json", { cache: "no-store" });
 		if (!res.ok) throw new Error(`manifest.json fetch failed: ${res.status}`);
 		const { albums, photos } = await res.json();
 		useAlbumsStore.getState().setAlbums(albums);

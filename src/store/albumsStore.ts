@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type { Album } from "../types";
 
 interface AlbumsState {
@@ -10,20 +11,27 @@ interface AlbumsState {
 	restoreAlbum: (album: Album) => void;
 }
 
-export const useAlbumsStore = create<AlbumsState>((set) => ({
-	albums: [],
-	setAlbums: (albums) => set({ albums }),
-	addAlbum: (album) => set((s) => ({ albums: [...s.albums, album] })),
-	updateAlbum: (album) =>
-		set((s) => ({
-			albums: s.albums.map((a) => (a.id === album.id ? { ...a, ...album } : a)),
-		})),
-	removeAlbum: (id) =>
-		set((s) => ({
-			albums: s.albums.filter((a) => a.id !== id),
-		})),
-	restoreAlbum: (album) =>
-		set((s) => ({
-			albums: [...s.albums, album],
-		})),
-}));
+export const useAlbumsStore = create<AlbumsState>()(
+	persist(
+		(set) => ({
+			albums: [],
+			setAlbums: (albums) => set({ albums }),
+			addAlbum: (album) => set((s) => ({ albums: [...s.albums, album] })),
+			updateAlbum: (album) =>
+				set((s) => ({
+					albums: s.albums.map((a) =>
+						a.id === album.id ? { ...a, ...album } : a,
+					),
+				})),
+			removeAlbum: (id) =>
+				set((s) => ({
+					albums: s.albums.filter((a) => a.id !== id),
+				})),
+			restoreAlbum: (album) =>
+				set((s) => ({
+					albums: [...s.albums, album],
+				})),
+		}),
+		{ name: "photo-showcase-albums" },
+	),
+);
