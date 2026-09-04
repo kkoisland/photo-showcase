@@ -11,7 +11,8 @@ Vite + React + TypeScriptで作った、旅行アルバムを周りの人に見�
 **Phase 1: データモデル整理 + 管理者UI出し分け(完了・マージ済み)**
 ブランチ: `refactor/admin-mode-foundation`(mainにマージ済み)
 
-**Phase 2: S3公開機能(未着手、S3インフラ用意後に着手)**
+**Phase 2: S3公開機能(完了・マージ済み)**
+残作業: ローカルストレージへの永続化(下記チェックリスト参照)、ダミーデータを実際の写真に差し替え
 
 ### やること一覧
 
@@ -32,8 +33,9 @@ GitHub ActionsによるS3への自動デプロイ、AWS CLIのセットアップ
 - [x] `src/main.tsx`(ローカル`pnpm dev`のデフォルト。常に管理用の`AdminApp`を描画)と `src/main.viewer.tsx` + `viewer.html`(公開ビルド専用の入り口。`App`のみを描画し、AWS関連コードを一切importしない)にエントリを分ける。**別URLを開く必要はなく、`pnpm dev`はこれまで通り1つのURLのまま**
 - [x] `vite.viewer-build.config.ts` を作り、`pnpm build` がこの`viewer.html`だけをビルド対象にするよう変更する(出力後に`dist/viewer.html`を`dist/index.html`にリネーム)。これにより「うっかり管理用の内容ごとビルドしてしまう」という事故が構造的に起きなくなる
 - [x] `AdminApp`に「公開(Publish)」ボタンを実装する。現在のアルバム状態から `manifest.json` を生成し、写真ファイルとあわせて `@aws-sdk/client-s3` で直接S3にアップロードする。すでにS3にある写真ファイルはスキップし差分のみアップロード(manifest.jsonは毎回全体を上書き)。1枚失敗しても他の写真の公開は止めず、失敗分はスキップして続行する
-- [ ] `pnpm run deploy` スクリプトを作る(`pnpm build`の出力である`dist/`をS3にアップロードする)
-- [ ] 閲覧用エントリ(`src/main.viewer.tsx`)のデータ読み込みを分岐する(ローカル: 編集用データ / デプロイ先: S3のmanifest.jsonをfetch)
+- [x] `pnpm run deploy` スクリプト(`scripts/deploy.mjs`)を作る(`pnpm build`の出力である`dist/`をS3にアップロードする)
+- [x] 閲覧用エントリ(`src/main.viewer.tsx`)は常にS3の`manifest.json`をfetchして表示する
+- [ ] (改善) ローカルストレージへの永続化: `useAlbumsStore`/`usePhotosStore`に`persist`を追加し、リロードで編集内容が消えないようにする
 
 **AWS鍵の扱いについて(重要)**
 
