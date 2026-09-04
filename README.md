@@ -12,7 +12,7 @@ Vite + React + TypeScriptで作った、旅行アルバムを周りの人に見�
 ブランチ: `refactor/admin-mode-foundation`(mainにマージ済み)
 
 **Phase 2: S3公開機能(完了・マージ済み)**
-残作業: ローカルストレージへの永続化(下記チェックリスト参照)、ダミーデータを実際の写真に差し替え
+残作業: S3上の削除済み写真ファイルのクリーンアップ(下記チェックリスト参照)、ダミーデータを実際の写真に差し替え
 
 ### やること一覧
 
@@ -35,7 +35,15 @@ GitHub ActionsによるS3への自動デプロイ、AWS CLIのセットアップ
 - [x] `AdminApp`に「公開(Publish)」ボタンを実装する。現在のアルバム状態から `manifest.json` を生成し、写真ファイルとあわせて `@aws-sdk/client-s3` で直接S3にアップロードする。すでにS3にある写真ファイルはスキップし差分のみアップロード(manifest.jsonは毎回全体を上書き)。1枚失敗しても他の写真の公開は止めず、失敗分はスキップして続行する
 - [x] `pnpm run deploy` スクリプト(`scripts/deploy.mjs`)を作る(`pnpm build`の出力である`dist/`をS3にアップロードする)
 - [x] 閲覧用エントリ(`src/main.viewer.tsx`)は常にS3の`manifest.json`をfetchして表示する
-- [ ] (改善) ローカルストレージへの永続化: `useAlbumsStore`/`usePhotosStore`に`persist`を追加し、リロードで編集内容が消えないようにする
+- [x] (改善) ローカルストレージへの永続化: `useAlbumsStore`/`usePhotosStore`に`persist`を追加。起動時は「ローカルストレージ→S3のmanifest.json→ダミーデータ」の優先順位で復元する
+- [x] (バグ修正) `manifest.json`がブラウザにキャッシュされ、Publish後も古い内容が表示される問題を修正(S3側で`CacheControl: "no-cache"`を指定、fetch側で`cache: "no-store"`を指定)
+- [ ] (改善) S3上の削除済み写真ファイルのクリーンアップ: Publish時、ローカルにもう存在しない写真ファイルをS3から実際に削除する(`ListObjectsV2Command` / `DeleteObjectsCommand`。IAM権限に`s3:ListBucket`/`s3:DeleteObject`が必要な可能性あり)
+
+**今後の検討事項**
+
+- サブドメイン(`photos.kkoisland.com`など)にするかどうか(保留中、今のS3のURLのままでも動作する)
+- 複数回に分けてImportし、まとめてPublishする運用にしたい場合の対応(サーバーが必要になり大掛かりになるため保留。当面は「Importしたら必ずPublishする」運用で回避する。やるかどうかは未定)
+- ドラッグ&ドロップでのインポート対応
 
 **AWS鍵の扱いについて(重要)**
 
