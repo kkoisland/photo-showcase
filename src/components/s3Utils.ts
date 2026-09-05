@@ -1,5 +1,7 @@
 import {
+	DeleteObjectsCommand,
 	HeadObjectCommand,
+	ListObjectsV2Command,
 	PutObjectCommand,
 	S3Client,
 } from "@aws-sdk/client-s3";
@@ -45,12 +47,14 @@ const guessContentType = (ext: string) => {
 	return "image/jpeg";
 };
 
-const uploadPhoto = async (photo: Photo): Promise<string> => {
+const uploadPhoto = async (
+	photo: Photo,
+): Promise<{ key: string; url: string }> => {
 	const ext = guessExtension(photo);
 	const key = `photos/${photo.id}.${ext}`;
 
 	if (await objectExists(key)) {
-		return publicUrlFor(key);
+		return { key, url: publicUrlFor(key) };
 	}
 
 	const arrayBuffer = await fetch(photo.url).then((r) => r.arrayBuffer());
@@ -62,7 +66,28 @@ const uploadPhoto = async (photo: Photo): Promise<string> => {
 			ContentType: guessContentType(ext),
 		}),
 	);
-	return publicUrlFor(key);
+	return { key, url: publicUrlFor(key) };
+};
+
+const deleteOrphanedPhotos = async (
+	currentKeys: Set<string>,
+): Promise<number> => {
+	const listed = await s3.send(
+		new ListObjectsV2Command({ Bucket: bucket, Prefix: "photos/" }),
+	);
+	const orphanedKeys = (listed.Contents ?? [])
+		.map((o) => o.Key)
+		.filter((key): key is string => key !== undefined && !currentKeys.has(key));
+
+	if (orphanedKeys.length === 0) return 0;
+
+	await s3.send(
+		new DeleteObjectsCommand({
+			Bucket: bucket,
+			Delete: { Objects: orphanedKeys.map((Key) => ({ Key })) },
+		}),
+	);
+	return orphanedKeys.length;
 };
 
 const uploadManifest = async (manifest: {
@@ -83,16 +108,19 @@ const uploadManifest = async (manifest: {
 export const publishToS3 = async (): Promise<{
 	photoCount: number;
 	skippedCount: number;
+	deletedCount: number;
 }> => {
 	const albums = useAlbumsStore.getState().albums;
 	const photos = usePhotosStore.getState().photos;
 
 	const photoUrlById = new Map<string, string>();
+	const currentKeys = new Set<string>();
 	let skippedCount = 0;
 	for (const photo of photos) {
 		try {
-			const url = await uploadPhoto(photo);
+			const { key, url } = await uploadPhoto(photo);
 			photoUrlById.set(photo.id, url);
+			currentKeys.add(key);
 		} catch (error) {
 			console.error(`Skipped photo "${photo.title}" (${photo.id}):`, error);
 			skippedCount++;
@@ -117,5 +145,12 @@ export const publishToS3 = async (): Promise<{
 
 	await uploadManifest({ albums: uploadedAlbums, photos: uploadedPhotos });
 
-	return { photoCount: uploadedPhotos.length, skippedCount };
+	let deletedCount = 0;
+	try {
+		deletedCount = await deleteOrphanedPhotos(currentKeys);
+	} catch (error) {
+		console.error("Failed to clean up orphaned photos:", error);
+	}
+
+	return { photoCount: uploadedPhotos.length, skippedCount, deletedCount };
 };

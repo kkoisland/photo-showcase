@@ -9,12 +9,16 @@ const AdminPublishButton = () => {
 	const handlePublish = async () => {
 		setIsPublishing(true);
 		try {
-			const { photoCount, skippedCount } = await publishToS3();
+			const { photoCount, skippedCount, deletedCount } = await publishToS3();
+			const notes = [
+				skippedCount > 0 ? `${skippedCount} skipped, see console` : null,
+				deletedCount > 0 ? `${deletedCount} orphaned files removed` : null,
+			].filter(Boolean);
 			showSnack({
 				type: "success",
 				message:
-					skippedCount > 0
-						? `Published ${photoCount} photos to S3 (${skippedCount} skipped, see console)`
+					notes.length > 0
+						? `Published ${photoCount} photos to S3 (${notes.join(", ")})`
 						: `Published ${photoCount} photos to S3`,
 			});
 		} catch (error) {
