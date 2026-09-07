@@ -9,6 +9,7 @@ const PhotoModal = () => {
 	const allPhotos = usePhotosStore((s) => s.photos);
 	const navigate = useNavigate();
 	const removePhoto = usePhotosStore((s) => s.removePhoto);
+	const addPhoto = usePhotosStore((s) => s.addPhoto);
 	const showSnack = useUIStore((s) => s.showSnack);
 
 	// Sort date ascending
@@ -33,21 +34,24 @@ const PhotoModal = () => {
 		);
 	}
 	const handleDelete = () => {
+		const deletedPhoto = photo;
 		removePhoto(photo.id);
 		showSnack({
 			type: "success",
 			message: "Photo deleted",
+			actionLabel: "Undo",
+			onAction: () => addPhoto(deletedPhoto),
 		});
 		if (nextPhoto) navigate(`/photos/${nextPhoto.id}`);
 		else if (prevPhoto) navigate(`/photos/${prevPhoto.id}`);
 		else navigate(`/albums/${photo.albumId}`);
 	};
 
-	const handleCoverUrl = () => {
+	const handleSetCoverPhoto = () => {
 		const { albums, updateAlbum } = useAlbumsStore.getState();
 		const album = albums.find((a) => a.id === photo.albumId);
 		if (!album) return;
-		updateAlbum({ ...album, coverUrl: photo.url });
+		updateAlbum({ ...album, coverPhotoId: photo.id });
 		showSnack({
 			type: "success",
 			message: "Photo set as album cover",
@@ -65,7 +69,7 @@ const PhotoModal = () => {
 							</button>
 						</span>
 						<span>
-							<button type="button" onClick={handleCoverUrl}>
+							<button type="button" onClick={handleSetCoverPhoto}>
 								Set as album cover
 							</button>
 						</span>

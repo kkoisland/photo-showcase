@@ -1,14 +1,23 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useUIStore } from "../store/uiStore";
 
 const SnackBar = () => {
 	const snack = useUIStore((s) => s.snack);
 	const clearSnack = useUIStore((s) => s.clearSnack);
+	const snackRef = useRef<HTMLDivElement | null>(null);
 
-	// biome-ignore lint: false positive
 	useEffect(() => {
-		const timer = setTimeout(() => clearSnack(), 5000);
-		return () => clearTimeout(timer);
+		const handleClickOutside = (e: MouseEvent) => {
+			if (snackRef.current && !snackRef.current.contains(e.target as Node)) {
+				clearSnack();
+			}
+		};
+		if (snack) {
+			document.addEventListener("mousedown", handleClickOutside);
+		}
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
 	}, [snack, clearSnack]);
 
 	let styles = "";
@@ -30,6 +39,7 @@ const SnackBar = () => {
 
 	return (
 		<div
+			ref={snackRef}
 			className={`fixed bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded shadow ${styles}`}
 		>
 			<span className="whitespace-pre-line">{snack?.message}</span>

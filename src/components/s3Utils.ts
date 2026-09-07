@@ -105,9 +105,14 @@ const uploadManifest = async (manifest: {
 	);
 };
 
+export interface SkippedPhoto {
+	title: string;
+	error: string;
+}
+
 export const publishToS3 = async (): Promise<{
 	photoCount: number;
-	skippedCount: number;
+	skippedPhotos: SkippedPhoto[];
 	deletedCount: number;
 }> => {
 	const albums = useAlbumsStore.getState().albums;
@@ -115,7 +120,7 @@ export const publishToS3 = async (): Promise<{
 
 	const photoUrlById = new Map<string, string>();
 	const currentKeys = new Set<string>();
-	let skippedCount = 0;
+	const skippedPhotos: SkippedPhoto[] = [];
 	for (const photo of photos) {
 		try {
 			const { key, url } = await uploadPhoto(photo);
@@ -123,7 +128,10 @@ export const publishToS3 = async (): Promise<{
 			currentKeys.add(key);
 		} catch (error) {
 			console.error(`Skipped photo "${photo.title}" (${photo.id}):`, error);
-			skippedCount++;
+			skippedPhotos.push({
+				title: photo.title,
+				error: error instanceof Error ? error.message : String(error),
+			});
 		}
 	}
 
@@ -132,14 +140,12 @@ export const publishToS3 = async (): Promise<{
 		.map((p) => ({ ...p, url: photoUrlById.get(p.id) ?? p.url }));
 
 	const uploadedAlbums: Album[] = albums.map((album) => {
-		const originalCoverPhoto = photos.find((p) => p.url === album.coverUrl);
-		const fallbackPhoto = photos.find((p) => p.albumId === album.id);
-		const coverPhotoId = originalCoverPhoto?.id ?? fallbackPhoto?.id;
+		const coverStillExists =
+			album.coverPhotoId !== undefined && photoUrlById.has(album.coverPhotoId);
+		const fallbackPhoto = uploadedPhotos.find((p) => p.albumId === album.id);
 		return {
 			...album,
-			coverUrl: coverPhotoId
-				? (photoUrlById.get(coverPhotoId) ?? album.coverUrl)
-				: album.coverUrl,
+			coverPhotoId: coverStillExists ? album.coverPhotoId : fallbackPhoto?.id,
 		};
 	});
 
@@ -152,5 +158,5 @@ export const publishToS3 = async (): Promise<{
 		console.error("Failed to clean up orphaned photos:", error);
 	}
 
-	return { photoCount: uploadedPhotos.length, skippedCount, deletedCount };
+	return { photoCount: uploadedPhotos.length, skippedPhotos, deletedCount };
 };

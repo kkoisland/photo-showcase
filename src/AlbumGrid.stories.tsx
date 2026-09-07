@@ -56,7 +56,7 @@ export const Default: Story = {
 			{
 				id: "a1",
 				title: "Test Album1",
-				coverUrl: "https://picsum.photos/300/200",
+				coverPhotoId: "a1-p0",
 				createdAt: "",
 				startDate: "2025-09-01",
 				endDate: "",
@@ -71,7 +71,7 @@ export const ThreeAlbums: Story = {
 			{
 				id: "a1",
 				title: "Test Album1",
-				coverUrl: "https://picsum.photos/300/200",
+				coverPhotoId: "a1-p0",
 				createdAt: "",
 				startDate: "2025-09-01",
 				endDate: "",
@@ -80,7 +80,7 @@ export const ThreeAlbums: Story = {
 			{
 				id: "a2",
 				title: "Test Album2",
-				coverUrl: "https://picsum.photos/300/400",
+				coverPhotoId: "a2-p0",
 				createdAt: "",
 				startDate: "",
 				endDate: "",
@@ -88,7 +88,7 @@ export const ThreeAlbums: Story = {
 			{
 				id: "a3",
 				title: "Test Album3",
-				coverUrl: "https://picsum.photos/300/500",
+				coverPhotoId: "a3-p0",
 				createdAt: "",
 				startDate: "2025-09-01",
 				endDate: "2025-09-15",
@@ -103,7 +103,7 @@ export const SixAlbums: Story = {
 			{
 				id: "a1",
 				title: "Test Album1",
-				coverUrl: "https://picsum.photos/300/200",
+				coverPhotoId: "a1-p0",
 				createdAt: "",
 				startDate: "2025-09-01",
 				endDate: "",
@@ -112,7 +112,7 @@ export const SixAlbums: Story = {
 			{
 				id: "a2",
 				title: "Test Album2",
-				coverUrl: "https://picsum.photos/300/400",
+				coverPhotoId: "a2-p0",
 				createdAt: "",
 				startDate: "",
 				endDate: "",
@@ -120,7 +120,7 @@ export const SixAlbums: Story = {
 			{
 				id: "a3",
 				title: "Test Album3",
-				coverUrl: "https://picsum.photos/300/500",
+				coverPhotoId: "a3-p0",
 				createdAt: "",
 				startDate: "2025-09-01",
 				endDate: "2025-09-15",
@@ -128,7 +128,7 @@ export const SixAlbums: Story = {
 			{
 				id: "a4",
 				title: "Test Album4",
-				coverUrl: "https://picsum.photos/300/600",
+				coverPhotoId: "a4-p0",
 				createdAt: "",
 				startDate: "",
 				endDate: "",
@@ -137,7 +137,7 @@ export const SixAlbums: Story = {
 			{
 				id: "a5",
 				title: "Test Album5",
-				coverUrl: "https://picsum.photos/300/700",
+				coverPhotoId: "a5-p0",
 				createdAt: "",
 				startDate: "",
 				endDate: "",
@@ -145,7 +145,7 @@ export const SixAlbums: Story = {
 			{
 				id: "a6",
 				title: "Test Album6",
-				coverUrl: "https://picsum.photos/300/800",
+				coverPhotoId: "a6-p0",
 				createdAt: "",
 				startDate: "2025-09-01",
 				endDate: "2025-09-15",

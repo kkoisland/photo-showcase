@@ -7,13 +7,12 @@ export function seedDummyData() {
 		{
 			id: "a1",
 			title: "Test Album1 Test Album1 Test Album1 Test Album1 Test Album1",
-			coverUrl: "https://picsum.photos/300/200",
+			coverPhotoId: "p1",
 			createdAt: "",
 		},
 		{
 			id: "a2",
 			title: "Test Album2",
-			coverUrl: "https://picsum.photos/300/400",
 			createdAt: "",
 		},
 	]);

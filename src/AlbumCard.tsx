@@ -16,11 +16,15 @@ interface AlbumCardProps {
 
 const AlbumCard = ({ album }: AlbumCardProps) => {
 	const updateAlbum = useAlbumsStore((s) => s.updateAlbum);
-	const removeAlbum = useAlbumsStore((s) => s.removeAlbum);
-	const restoreAlbum = useAlbumsStore((s) => s.restoreAlbum);
 	const count = usePhotosStore(
 		(s) => s.photos.filter((p) => p.albumId === album.id).length,
 	);
+	const coverPhoto = usePhotosStore((s) => {
+		const photosInAlbum = s.photos.filter((p) => p.albumId === album.id);
+		return (
+			photosInAlbum.find((p) => p.id === album.coverPhotoId) ?? photosInAlbum[0]
+		);
+	});
 	const [newTitle, setNewTitle] = useState(album.title);
 	const [isDateEditorOpen, setIsDateEditorOpen] = useState(false);
 	const [contextMenuOpen, setContextMenuOpen] = useState(false);
@@ -56,9 +60,9 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 							borderRadius: 8,
 						}}
 					>
-						{album.coverUrl && (
+						{coverPhoto && (
 							<img
-								src={album.coverUrl}
+								src={coverPhoto.url}
 								alt={album.title}
 								style={{
 									width: 221,
@@ -233,12 +237,19 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 					cancelLabel="Cancel"
 					danger
 					onConfirm={() => {
-						removeAlbum(album.id);
+						const removed = albumUtils.deleteAlbumWithPhotos(album.id);
 						showSnack({
 							type: "success",
 							message: "Album deleted: ",
 							actionLabel: "Undo",
-							onAction: () => restoreAlbum(album),
+							onAction: () => {
+								if (removed) {
+									albumUtils.restoreAlbumWithPhotos(
+										removed.album,
+										removed.photos,
+									);
+								}
+							},
 						});
 						setContextMenuOpen(false);
 					}}

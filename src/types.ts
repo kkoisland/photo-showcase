@@ -14,7 +14,7 @@ export interface Photo {
 export interface Album {
 	id: string;
 	title: string;
-	coverUrl?: string;
+	coverPhotoId?: string;
 	shared?: boolean;
 	sharedUrl?: string;
 	updatedAt?: string;
