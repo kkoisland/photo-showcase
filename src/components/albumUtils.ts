@@ -89,7 +89,7 @@ const importPhotos = async (
 		const newAlbum: Album = {
 			id: albumId,
 			title: albumTitle || "no album title",
-			coverUrl: newPhotos[0]?.url,
+			coverPhotoId: newPhotos[0]?.id,
 			createdAt: new Date().toISOString(),
 			updatedAt: new Date().toISOString(),
 		};
@@ -111,6 +111,37 @@ const importPhotos = async (
 	}
 
 	return { skippedInvalidFiles, duplicateFiles, newPhotos };
+};
+
+/**
+ * Delete an album together with all photos that belong to it.
+ * Returns the removed album and photos so the caller can restore them (Undo).
+ */
+const deleteAlbumWithPhotos = (
+	albumId: string,
+): { album: Album; photos: Photo[] } | null => {
+	const album = useAlbumsStore.getState().albums.find((a) => a.id === albumId);
+	if (!album) return null;
+
+	const { photos } = usePhotosStore.getState();
+	const removedPhotos = photos.filter((p) => p.albumId === albumId);
+
+	usePhotosStore
+		.getState()
+		.setPhotos(photos.filter((p) => p.albumId !== albumId));
+	useAlbumsStore.getState().removeAlbum(albumId);
+
+	return { album, photos: removedPhotos };
+};
+
+/**
+ * Restore an album together with the photos removed alongside it (Undo).
+ */
+const restoreAlbumWithPhotos = (album: Album, photos: Photo[]) => {
+	useAlbumsStore.getState().restoreAlbum(album);
+	usePhotosStore
+		.getState()
+		.setPhotos([...usePhotosStore.getState().photos, ...photos]);
 };
 
 /**
@@ -144,5 +175,10 @@ const exportAlbum = async (albumId: string): Promise<void> => {
 	URL.revokeObjectURL(url);
 };
 
-const albumUtils = { importPhotos, exportAlbum };
+const albumUtils = {
+	importPhotos,
+	exportAlbum,
+	deleteAlbumWithPhotos,
+	restoreAlbumWithPhotos,
+};
 export default albumUtils;

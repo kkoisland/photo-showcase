@@ -12,7 +12,7 @@ Vite + React + TypeScriptで作った、旅行アルバムを周りの人に見�
 ブランチ: `refactor/admin-mode-foundation`(mainにマージ済み)
 
 **Phase 2: S3公開機能(完了・マージ済み)**
-残作業: ローカルとS3を常に完全一致させるための仕上げ(アルバム削除の連動、カバー写真の紐付け方法の見直しなど。下記「今後の検討事項」参照)、ダミーデータを実際の写真に差し替え
+残作業: ダミーデータを実際の写真に差し替え
 
 ### やること一覧
 
@@ -38,10 +38,12 @@ GitHub ActionsによるS3への自動デプロイ、AWS CLIのセットアップ
 - [x] (改善) ローカルストレージへの永続化: `useAlbumsStore`/`usePhotosStore`に`persist`を追加。起動時は「ローカルストレージ→S3のmanifest.json→ダミーデータ」の優先順位で復元する
 - [x] (バグ修正) `manifest.json`がブラウザにキャッシュされ、Publish後も古い内容が表示される問題を修正(S3側で`CacheControl: "no-cache"`を指定、fetch側で`cache: "no-store"`を指定)
 - [x] (改善) S3上の削除済み写真ファイルのクリーンアップ: Publish時、ローカルにもう存在しない写真ファイルをS3から実際に削除する(`ListObjectsV2Command` / `DeleteObjectsCommand`。IAMユーザーのバケットポリシーに`s3:ListBucket`/`s3:DeleteObject`を追加して対応)
+- [x] (改善) アルバム削除時に、そのアルバムに属する写真も連動して削除する(Undo対応)
+- [x] (改善) カバー写真の紐付けをURL文字列比較からID参照(`coverPhotoId`)に変更する
+- [x] (改善) Publish失敗時の通知を明示的なダイアログで表示する(それまではコンソールログのみだった)
 
 **今後の検討事項**
 
-- ローカルとS3を常に完全一致させるための仕上げ: アルバム削除時に写真も連動して削除する、カバー写真の紐付けをURL文字列比較からID参照に変更する、Publish失敗時の通知を明示的なダイアログにする(次のブランチで対応予定)
 - サブドメイン(`photos.kkoisland.com`など)にするかどうか(保留中、今のS3のURLのままでも動作する)
 - 複数回に分けてImportし、まとめてPublishする運用にしたい場合の対応(サーバーが必要になり大掛かりになるため保留。当面は「Importしたら必ずPublishする」運用で回避する。やるかどうかは未定)
 - ドラッグ&ドロップでのインポート対応
@@ -137,7 +139,7 @@ classDiagram
     class Album {
         +string id
         +string title
-        +string coverUrl
+        +string coverPhotoId
         +boolean shared
         +string sharedUrl
         +string createdAt

@@ -28,7 +28,6 @@ export const Default: Story = {
 		album: {
 			id: "a1",
 			title: "Test Album1",
-			coverUrl: "https://picsum.photos/300/200",
 			createdAt: "",
 			startDate: "",
 			endDate: "",
