@@ -5,6 +5,7 @@ import AlbumImportForm from "./components/AlbumImportForm";
 import albumUtils from "./components/albumUtils";
 import ConfirmModal from "./components/ConfirmModal";
 import handleCopyToClipboard from "./components/copyToClipboard";
+import { albumUrlFor } from "./components/publicUrls";
 import { useAlbumsStore } from "./store/albumsStore";
 import { usePhotosStore } from "./store/photosStore";
 import { useUIStore } from "./store/uiStore";
@@ -102,27 +103,15 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 						type="button"
 						onClick={(e) => {
 							e.preventDefault();
-							const sharedUrl = album.shared
-								? album.sharedUrl
-								: `https://example.com/albums/${album.id}`;
-							if (sharedUrl) handleCopyToClipboard(sharedUrl);
+							handleCopyToClipboard(albumUrlFor(album.id));
 							showSnack({
 								type: "info",
-								message: album.shared
-									? "Link copied to clipboard"
-									: "Album shared and link copied to clipboard",
+								message: "Link copied to clipboard",
 							});
-							if (!album.shared) {
-								updateAlbum({
-									...album,
-									shared: true,
-									sharedUrl,
-								});
-							}
 						}}
 						className="underline ml-2 cursor-pointer link-accent"
 					>
-						{album.shared ? "Shared" : "Not shared"}
+						Copy link
 					</button>
 					{import.meta.env.DEV && (
 						<button

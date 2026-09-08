@@ -15,8 +15,6 @@ export interface Album {
 	id: string;
 	title: string;
 	coverPhotoId?: string;
-	shared?: boolean;
-	sharedUrl?: string;
 	updatedAt?: string;
 	createdAt: string;
 	startDate?: string;

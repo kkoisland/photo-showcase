@@ -17,8 +17,6 @@ const meta: Meta<typeof PhotoGrid> = {
 					{
 						id: "a1",
 						title: "Shared Album",
-						shared: true,
-						sharedUrl: "https://example.com/albums/a1",
 						createdAt: "",
 					},
 				],

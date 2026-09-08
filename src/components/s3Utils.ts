@@ -8,6 +8,7 @@ import {
 import { useAlbumsStore } from "../store/albumsStore";
 import { usePhotosStore } from "../store/photosStore";
 import type { Album, Photo } from "../types";
+import { publicUrlFor } from "./publicUrls";
 
 const region = import.meta.env.VITE_AWS_REGION;
 const bucket = import.meta.env.VITE_AWS_S3_BUCKET;
@@ -20,8 +21,7 @@ const s3 = new S3Client({
 	},
 });
 
-export const publicUrlFor = (key: string) =>
-	`http://${bucket}.s3-website-${region}.amazonaws.com/${key}`;
+export { publicUrlFor };
 
 const objectExists = async (key: string): Promise<boolean> => {
 	try {
