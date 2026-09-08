@@ -14,7 +14,7 @@ Vite + React + TypeScriptで作った、旅行アルバムを周りの人に見�
 **Phase 2: S3公開機能(完了・マージ済み)**
 残作業: ダミーデータを実際の写真に差し替え
 
-**Phase 3: Import時S3同期 + アルバム表示管理(実装中)**
+**Phase 3: Import時S3同期 + アルバム表示管理(実装完了、マージ待ち)**
 ローカルとS3の食い違いをそもそも起こしにくくするための設計変更。「Importした瞬間にS3へアップロードし、Publishはmanifest.jsonの更新だけにする」という方針に転換する。詳細は下記チェックリスト参照
 
 実装中に判明した重要な制約: `AlbumCard.tsx`・`PhotoModal.tsx`・`AlbumImportForm.tsx`は`routes.tsx`経由で閲覧者向けビルド(`App.tsx`/`main.viewer.tsx`)にも含まれる共有コンポーネントで、`import.meta.env.DEV`のJSX条件分岐だけでは、そこからAWS鍵を読み込む`s3Utils.ts`が閲覧者向けビルドに紛れ込むのを防げない(実際に試して、鍵がビルド成果物に埋め込まれることを確認した)。そのため、`s3Utils.ts`の実装をReact Context(`src/adminS3Context.ts`、AWS SDKへの依存なし)経由で注入する方式にした。実際に注入するのは`AdminApp.tsx`(閲覧者ビルドには絶対に含まれない)のみ。Import時のアップロードも、この後の削除API呼び出しも、この仕組みの上に実装する
@@ -59,7 +59,7 @@ GitHub ActionsによるS3への自動デプロイ、AWS CLIのセットアップ
 - [x] Import中は「アップロード中...」のローディング表示を出し、フォームを操作不可にする
 - [x] 写真削除: `ConfirmModal`で確認 → S3の削除APIを呼び出し、成功した場合のみローカルからも削除する。失敗時はローカルの状態を変えずエラーを表示し、再度削除を試せるようにする。既存のUndo(スナックバーの取り消し)は廃止する。削除APIも`adminS3Context.ts`経由で注入する
 - [x] アルバム削除: 写真も含めて`DeleteObjectsCommand`でまとめてS3から削除し、成功した場合のみローカルからも削除する。Photo削除と同様に確認ダイアログのみとし、既存のUndoは廃止する
-- [ ] `publishToS3`のアップロードループは、Import時点で未アップロードのまま残っている写真(=何らかの理由で失敗し続けているもの)だけを対象にする形へ縮小する。オーファンクリーンアップ(`deleteOrphanedPhotos`)はそのまま保険として残す
+- [x] `publishToS3`のアップロードループは、`keyFromPublicUrl`で既にS3の恒久URLを持っている写真を判別し、そのままmanifestに使う(S3への問い合わせ自体をスキップ)。Import時点で何らかの理由でS3に上がらなかった写真だけ、ここで改めてアップロードを試みる。オーファンクリーンアップ(`deleteOrphanedPhotos`)はそのまま保険として残した
 
 **今後の検討事項**
 

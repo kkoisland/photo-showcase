@@ -134,6 +134,15 @@ export const publishToS3 = async (): Promise<{
 	const currentKeys = new Set<string>();
 	const skippedPhotos: SkippedPhoto[] = [];
 	for (const photo of photos) {
+		// Photos already carry their permanent S3 URL from upload-on-import;
+		// only photos that somehow never made it to S3 need uploading here.
+		const existingKey = keyFromPublicUrl(photo.url);
+		if (existingKey) {
+			photoUrlById.set(photo.id, photo.url);
+			currentKeys.add(existingKey);
+			continue;
+		}
+
 		try {
 			const { key, url } = await uploadPhoto(photo);
 			photoUrlById.set(photo.id, url);
