@@ -139,17 +139,25 @@ export const publishToS3 = async (): Promise<{
 		.filter((p) => photoUrlById.has(p.id))
 		.map((p) => ({ ...p, url: photoUrlById.get(p.id) ?? p.url }));
 
-	const uploadedAlbums: Album[] = albums.map((album) => {
+	// Hidden albums keep their photo files on S3 (uploaded above) but are left
+	// out of manifest.json, so they never show up for viewers.
+	const visibleAlbums = albums.filter((a) => !a.hidden);
+	const visibleAlbumIds = new Set(visibleAlbums.map((a) => a.id));
+	const manifestPhotos = uploadedPhotos.filter((p) =>
+		visibleAlbumIds.has(p.albumId),
+	);
+
+	const manifestAlbums: Album[] = visibleAlbums.map((album) => {
 		const coverStillExists =
 			album.coverPhotoId !== undefined && photoUrlById.has(album.coverPhotoId);
-		const fallbackPhoto = uploadedPhotos.find((p) => p.albumId === album.id);
+		const fallbackPhoto = manifestPhotos.find((p) => p.albumId === album.id);
 		return {
 			...album,
 			coverPhotoId: coverStillExists ? album.coverPhotoId : fallbackPhoto?.id,
 		};
 	});
 
-	await uploadManifest({ albums: uploadedAlbums, photos: uploadedPhotos });
+	await uploadManifest({ albums: manifestAlbums, photos: manifestPhotos });
 
 	let deletedCount = 0;
 	try {
@@ -158,5 +166,5 @@ export const publishToS3 = async (): Promise<{
 		console.error("Failed to clean up orphaned photos:", error);
 	}
 
-	return { photoCount: uploadedPhotos.length, skippedPhotos, deletedCount };
+	return { photoCount: manifestPhotos.length, skippedPhotos, deletedCount };
 };

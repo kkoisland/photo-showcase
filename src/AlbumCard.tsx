@@ -99,6 +99,18 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 				</div>
 				<div className="flex items-center mb-2 relative">
 					<span>{count} files</span>
+					{import.meta.env.DEV && (
+						<button
+							type="button"
+							onClick={(e) => {
+								e.preventDefault();
+								updateAlbum({ ...album, hidden: !album.hidden });
+							}}
+							className="ml-2 text-xs opacity-70 cursor-pointer underline"
+						>
+							{album.hidden ? "Hidden" : "Show"}
+						</button>
+					)}
 					<button
 						type="button"
 						onClick={(e) => {

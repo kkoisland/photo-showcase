@@ -15,6 +15,7 @@ export interface Album {
 	id: string;
 	title: string;
 	coverPhotoId?: string;
+	hidden?: boolean;
 	updatedAt?: string;
 	createdAt: string;
 	startDate?: string;

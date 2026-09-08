@@ -90,6 +90,7 @@ const importPhotos = async (
 			id: albumId,
 			title: albumTitle || "no album title",
 			coverPhotoId: newPhotos[0]?.id,
+			hidden: true,
 			createdAt: new Date().toISOString(),
 			updatedAt: new Date().toISOString(),
 		};
