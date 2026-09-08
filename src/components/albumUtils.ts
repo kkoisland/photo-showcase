@@ -137,34 +137,26 @@ const importPhotos = async (
 };
 
 /**
- * Delete an album together with all photos that belong to it.
- * Returns the removed album and photos so the caller can restore them (Undo).
+ * Delete an album together with all photos that belong to it. The S3 delete
+ * call happens first; local state is only updated once it succeeds, so a
+ * failure (thrown to the caller) leaves everything as-is and safely retryable.
  */
-const deleteAlbumWithPhotos = (
+const deleteAlbumWithPhotos = async (
 	albumId: string,
-): { album: Album; photos: Photo[] } | null => {
+	deletePhotos: (photos: Photo[]) => Promise<void>,
+): Promise<void> => {
 	const album = useAlbumsStore.getState().albums.find((a) => a.id === albumId);
-	if (!album) return null;
+	if (!album) return;
 
 	const { photos } = usePhotosStore.getState();
-	const removedPhotos = photos.filter((p) => p.albumId === albumId);
+	const albumPhotos = photos.filter((p) => p.albumId === albumId);
+
+	await deletePhotos(albumPhotos);
 
 	usePhotosStore
 		.getState()
 		.setPhotos(photos.filter((p) => p.albumId !== albumId));
 	useAlbumsStore.getState().removeAlbum(albumId);
-
-	return { album, photos: removedPhotos };
-};
-
-/**
- * Restore an album together with the photos removed alongside it (Undo).
- */
-const restoreAlbumWithPhotos = (album: Album, photos: Photo[]) => {
-	useAlbumsStore.getState().restoreAlbum(album);
-	usePhotosStore
-		.getState()
-		.setPhotos([...usePhotosStore.getState().photos, ...photos]);
 };
 
 /**
@@ -202,6 +194,5 @@ const albumUtils = {
 	importPhotos,
 	exportAlbum,
 	deleteAlbumWithPhotos,
-	restoreAlbumWithPhotos,
 };
 export default albumUtils;

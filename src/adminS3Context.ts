@@ -10,14 +10,15 @@ import type { Photo } from "./types";
  */
 export interface AdminS3Api {
 	uploadPhoto: (photo: Photo) => Promise<{ key: string; url: string }>;
+	deletePhoto: (photo: Photo) => Promise<void>;
+	deletePhotos: (photos: Photo[]) => Promise<void>;
 }
 
 export const AdminS3Context = createContext<AdminS3Api | null>(null);
 
-export const useAdminS3 = (): AdminS3Api => {
-	const ctx = useContext(AdminS3Context);
-	if (!ctx) {
-		throw new Error("useAdminS3 must be used within AdminApp");
-	}
-	return ctx;
-};
+/**
+ * Returns null outside AdminApp (e.g. the viewer build, or before it mounts
+ * its provider). AlbumCard/PhotoModal render unconditionally for both admin
+ * and viewer, so callers must guard against null rather than assume it's set.
+ */
+export const useAdminS3 = (): AdminS3Api | null => useContext(AdminS3Context);

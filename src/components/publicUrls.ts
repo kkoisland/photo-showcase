@@ -6,3 +6,6 @@ const baseUrl = `http://${bucket}.s3-website-${region}.amazonaws.com`;
 export const publicUrlFor = (key: string) => `${baseUrl}/${key}`;
 
 export const albumUrlFor = (albumId: string) => `${baseUrl}/albums/${albumId}`;
+
+export const keyFromPublicUrl = (url: string): string | null =>
+	url.startsWith(`${baseUrl}/`) ? url.slice(baseUrl.length + 1) : null;

@@ -16,10 +16,10 @@ const AlbumImportForm = ({ openType, albumId, onCancel }: Props) => {
 	const [isUploading, setIsUploading] = useState(false);
 	const [skippedPhotos, setSkippedPhotos] = useState<SkippedPhoto[]>([]);
 	const showSnack = useUIStore((s) => s.showSnack);
-	const { uploadPhoto } = useAdminS3();
+	const adminS3 = useAdminS3();
 	const handleFileImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = Array.from(e.target.files ?? []);
-		if (files.length === 0) return;
+		if (files.length === 0 || !adminS3) return;
 
 		setIsUploading(true);
 		const { skippedInvalidFiles, duplicateFiles, skippedPhotos } =
@@ -27,7 +27,7 @@ const AlbumImportForm = ({ openType, albumId, onCancel }: Props) => {
 				files,
 				albumId,
 				openType,
-				uploadPhoto,
+				adminS3.uploadPhoto,
 				title,
 			);
 		setIsUploading(false);

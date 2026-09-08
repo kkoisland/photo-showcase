@@ -8,7 +8,7 @@ import {
 import { useAlbumsStore } from "../store/albumsStore";
 import { usePhotosStore } from "../store/photosStore";
 import type { Album, Photo, SkippedPhoto } from "../types";
-import { publicUrlFor } from "./publicUrls";
+import { keyFromPublicUrl, publicUrlFor } from "./publicUrls";
 
 const region = import.meta.env.VITE_AWS_REGION;
 const bucket = import.meta.env.VITE_AWS_S3_BUCKET;
@@ -68,6 +68,23 @@ export const uploadPhoto = async (
 	);
 	return { key, url: publicUrlFor(key) };
 };
+
+export const deletePhotos = async (photos: Photo[]): Promise<void> => {
+	const keys = photos
+		.map((p) => keyFromPublicUrl(p.url))
+		.filter((key): key is string => key !== null);
+	if (keys.length === 0) return;
+
+	await s3.send(
+		new DeleteObjectsCommand({
+			Bucket: bucket,
+			Delete: { Objects: keys.map((Key) => ({ Key })) },
+		}),
+	);
+};
+
+export const deletePhoto = (photo: Photo): Promise<void> =>
+	deletePhotos([photo]);
 
 const deleteOrphanedPhotos = async (
 	currentKeys: Set<string>,

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAdminS3 } from "./adminS3Context";
 import AlbumDateEditor from "./components/AlbumDateEditor";
 import AlbumImportForm from "./components/AlbumImportForm";
 import albumUtils from "./components/albumUtils";
@@ -34,6 +35,8 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 	const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
 	const menuRef = useRef<HTMLDivElement | null>(null);
 	const showSnack = useUIStore((s) => s.showSnack);
+	const adminS3 = useAdminS3();
+	const [isDeleting, setIsDeleting] = useState(false);
 
 	useEffect(() => {
 		const handleClickOutside = (e: MouseEvent) => {
@@ -234,25 +237,29 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 			{import.meta.env.DEV && showRemoveConfirm && (
 				<ConfirmModal
 					title="Delete this album?"
-					confirmLabel="Delete"
+					confirmLabel={isDeleting ? "Deleting..." : "Delete"}
 					cancelLabel="Cancel"
 					danger
-					onConfirm={() => {
-						const removed = albumUtils.deleteAlbumWithPhotos(album.id);
-						showSnack({
-							type: "success",
-							message: "Album deleted: ",
-							actionLabel: "Undo",
-							onAction: () => {
-								if (removed) {
-									albumUtils.restoreAlbumWithPhotos(
-										removed.album,
-										removed.photos,
-									);
-								}
-							},
-						});
-						setContextMenuOpen(false);
+					onConfirm={async () => {
+						if (!adminS3 || isDeleting) return;
+						setIsDeleting(true);
+						try {
+							await albumUtils.deleteAlbumWithPhotos(
+								album.id,
+								adminS3.deletePhotos,
+							);
+							showSnack({ type: "success", message: "Album deleted" });
+							setShowRemoveConfirm(false);
+							setContextMenuOpen(false);
+						} catch (error) {
+							console.error(error);
+							showSnack({
+								type: "error",
+								message: "Failed to delete album. Please try again.",
+							});
+						} finally {
+							setIsDeleting(false);
+						}
 					}}
 					onCancel={() => {
 						setShowRemoveConfirm(false);

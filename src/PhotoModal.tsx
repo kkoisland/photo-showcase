@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useAdminS3 } from "./adminS3Context";
+import ConfirmModal from "./components/ConfirmModal";
 import SnackBar from "./components/SnackBar";
 import { useAlbumsStore } from "./store/albumsStore";
 import { usePhotosStore } from "./store/photosStore";
@@ -9,8 +12,10 @@ const PhotoModal = () => {
 	const allPhotos = usePhotosStore((s) => s.photos);
 	const navigate = useNavigate();
 	const removePhoto = usePhotosStore((s) => s.removePhoto);
-	const addPhoto = usePhotosStore((s) => s.addPhoto);
 	const showSnack = useUIStore((s) => s.showSnack);
+	const adminS3 = useAdminS3();
+	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+	const [isDeleting, setIsDeleting] = useState(false);
 
 	// Sort date ascending
 	const sortedPhotos = [...allPhotos].sort((a, b) =>
@@ -33,18 +38,27 @@ const PhotoModal = () => {
 			</div>
 		);
 	}
-	const handleDelete = () => {
-		const deletedPhoto = photo;
-		removePhoto(photo.id);
-		showSnack({
-			type: "success",
-			message: "Photo deleted",
-			actionLabel: "Undo",
-			onAction: () => addPhoto(deletedPhoto),
-		});
-		if (nextPhoto) navigate(`/photos/${nextPhoto.id}`);
-		else if (prevPhoto) navigate(`/photos/${prevPhoto.id}`);
-		else navigate(`/albums/${photo.albumId}`);
+
+	const handleDeleteConfirm = async () => {
+		if (!adminS3 || isDeleting) return;
+		setIsDeleting(true);
+		try {
+			await adminS3.deletePhoto(photo);
+			removePhoto(photo.id);
+			showSnack({ type: "success", message: "Photo deleted" });
+			setShowDeleteConfirm(false);
+			if (nextPhoto) navigate(`/photos/${nextPhoto.id}`);
+			else if (prevPhoto) navigate(`/photos/${prevPhoto.id}`);
+			else navigate(`/albums/${photo.albumId}`);
+		} catch (error) {
+			console.error(error);
+			showSnack({
+				type: "error",
+				message: "Failed to delete photo. Please try again.",
+			});
+		} finally {
+			setIsDeleting(false);
+		}
 	};
 
 	const handleSetCoverPhoto = () => {
@@ -64,7 +78,7 @@ const PhotoModal = () => {
 				{import.meta.env.DEV && (
 					<>
 						<span>
-							<button type="button" onClick={handleDelete}>
+							<button type="button" onClick={() => setShowDeleteConfirm(true)}>
 								Delete
 							</button>
 						</span>
@@ -116,6 +130,16 @@ const PhotoModal = () => {
 				>
 					›
 				</Link>
+			)}
+			{import.meta.env.DEV && showDeleteConfirm && (
+				<ConfirmModal
+					title="Delete this photo?"
+					confirmLabel={isDeleting ? "Deleting..." : "Delete"}
+					cancelLabel="Cancel"
+					danger
+					onConfirm={handleDeleteConfirm}
+					onCancel={() => setShowDeleteConfirm(false)}
+				/>
 			)}
 			<SnackBar />
 		</div>
