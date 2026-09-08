@@ -7,7 +7,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { useAlbumsStore } from "../store/albumsStore";
 import { usePhotosStore } from "../store/photosStore";
-import type { Album, Photo } from "../types";
+import type { Album, Photo, SkippedPhoto } from "../types";
 import { publicUrlFor } from "./publicUrls";
 
 const region = import.meta.env.VITE_AWS_REGION;
@@ -47,7 +47,7 @@ const guessContentType = (ext: string) => {
 	return "image/jpeg";
 };
 
-const uploadPhoto = async (
+export const uploadPhoto = async (
 	photo: Photo,
 ): Promise<{ key: string; url: string }> => {
 	const ext = guessExtension(photo);
@@ -104,11 +104,6 @@ const uploadManifest = async (manifest: {
 		}),
 	);
 };
-
-export interface SkippedPhoto {
-	title: string;
-	error: string;
-}
 
 export const publishToS3 = async (): Promise<{
 	photoCount: number;

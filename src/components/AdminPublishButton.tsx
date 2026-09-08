@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useUIStore } from "../store/uiStore";
+import type { SkippedPhoto } from "../types";
 import ConfirmModal from "./ConfirmModal";
-import { publishToS3, type SkippedPhoto } from "./s3Utils";
+import { publishToS3 } from "./s3Utils";
 
 const AdminPublishButton = () => {
 	const [isPublishing, setIsPublishing] = useState(false);

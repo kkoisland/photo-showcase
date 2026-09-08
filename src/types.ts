@@ -58,3 +58,8 @@ export interface Snack {
 	actionLabel?: string;
 	onAction?: () => void;
 }
+
+export interface SkippedPhoto {
+	title: string;
+	error: string;
+}

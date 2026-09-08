@@ -3,13 +3,16 @@ import JSZip from "jszip";
 import { v4 as uuid } from "uuid";
 import { useAlbumsStore } from "../store/albumsStore";
 import { usePhotosStore } from "../store/photosStore";
-import type { Album, Photo } from "../types";
+import type { Album, Photo, SkippedPhoto } from "../types";
 
 /**
  * Import files into an album
  * @param files Selected files
  * @param albumId Album ID (pass uuid if creating new)
  * @param openType "new" | "existing"
+ * @param uploadPhoto Uploads a photo to S3 and returns its permanent URL (injected by
+ *   the caller so this file never imports the AWS-key-loading s3Utils.ts directly —
+ *   this module is reachable from the viewer build via AlbumCard.tsx)
  * @param albumTitle Album title for new album
  */
 
@@ -17,6 +20,7 @@ const importPhotos = async (
 	files: File[],
 	albumId: string,
 	openType: "new" | "existing",
+	uploadPhoto: (photo: Photo) => Promise<{ key: string; url: string }>,
 	albumTitle?: string,
 ) => {
 	const album = useAlbumsStore.getState().albums.find((a) => a.id === albumId);
@@ -58,8 +62,8 @@ const importPhotos = async (
 		(file) => !validFiles.includes(file),
 	);
 
-	// Generate Photo objects
-	const newPhotos: Photo[] = await Promise.all(
+	// Generate Photo candidates (a local blob: URL is only used to read bytes for upload)
+	const candidates: Photo[] = await Promise.all(
 		uniqueFileHashes.map(async ({ file, hash }) => {
 			let takenDate: string;
 			try {
@@ -83,6 +87,24 @@ const importPhotos = async (
 			};
 		}),
 	);
+
+	// Upload each candidate to S3 immediately; only photos that succeed become
+	// part of the album (failures are reported to the caller, not added locally)
+	const skippedPhotos: SkippedPhoto[] = [];
+	const newPhotos: Photo[] = [];
+	for (const candidate of candidates) {
+		try {
+			const { url } = await uploadPhoto(candidate);
+			newPhotos.push({ ...candidate, url });
+		} catch (error) {
+			skippedPhotos.push({
+				title: candidate.title,
+				error: error instanceof Error ? error.message : String(error),
+			});
+		} finally {
+			URL.revokeObjectURL(candidate.url);
+		}
+	}
 
 	// Update album
 	if (openType === "new") {
@@ -111,7 +133,7 @@ const importPhotos = async (
 			});
 	}
 
-	return { skippedInvalidFiles, duplicateFiles, newPhotos };
+	return { skippedInvalidFiles, duplicateFiles, skippedPhotos, newPhotos };
 };
 
 /**
