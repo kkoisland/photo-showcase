@@ -12,7 +12,6 @@ interface Props {
 }
 const AlbumImportForm = ({ openType, albumId, onCancel }: Props) => {
 	const inputId = useId();
-	const [title, setTitle] = useState("no title");
 	const [isUploading, setIsUploading] = useState(false);
 	const [skippedPhotos, setSkippedPhotos] = useState<SkippedPhoto[]>([]);
 	const showSnack = useUIStore((s) => s.showSnack);
@@ -28,7 +27,7 @@ const AlbumImportForm = ({ openType, albumId, onCancel }: Props) => {
 				albumId,
 				openType,
 				adminS3.uploadPhoto,
-				title,
+				"no title",
 			);
 		setIsUploading(false);
 
@@ -63,19 +62,6 @@ const AlbumImportForm = ({ openType, albumId, onCancel }: Props) => {
 	};
 	return (
 		<div>
-			{openType === "new" && (
-				<label className="block mb-1 text-sm font-medium">
-					Enter album title
-					<input
-						type="text"
-						value={title}
-						onChange={(e) => setTitle(e.target.value)}
-						className="border rounded px-2 py-1 mb-4 w-full"
-						disabled={isUploading}
-					/>
-				</label>
-			)}
-
 			<label className="block mb-1 text-sm font-medium">
 				Select photos or videos
 				<div className="border rounded px-2 py-1 w-full cursor-pointer surface-bg">
