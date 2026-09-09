@@ -87,10 +87,10 @@ GitHub ActionsによるS3への自動デプロイ、AWS CLIのセットアップ
 
 | ページ | 管理者のみ表示 | 誰でも表示 |
 |---|---|---|
-| `/albums` (AlbumGrid) | 新規インポートボタン、3点メニュー(削除・名前変更・エクスポート) | アルバム一覧 |
-| `/albums/:albumId` (PhotoGrid) | 削除ボタン、追加インポート | メイソンリー表示 |
-| PhotoModal | 削除ボタン、「カバーに設定」 | 拡大表示、前後移動 |
-| Header(**`pnpm dev`で開いたときのみ**) | 「公開(Publish)」ボタン | ― |
+| `/albums` (AlbumGrid) | 新規インポートボタン、タイトルのインライン編集、表示/非表示切り替え、共有リンクコピー、3点メニュー(追加インポート・エクスポート・削除) | アルバム一覧 |
+| `/albums/:albumId` (PhotoGrid) | ― | メイソンリー表示 |
+| PhotoModal | 削除ボタン(確認ダイアログ付き)、「カバーに設定」 | 拡大表示、前後移動 |
+| Header | 「公開(Publish)」ボタン(**`pnpm dev`で開いたときのみ**) | Back to Albums、テーマ切替 |
 
 「公開」ボタンは、`pnpm dev`(ローカル)で動く`AdminApp`にのみ存在する。`pnpm build`/`pnpm run deploy`でS3にアップロードされる方(`App`)にはこのボタン自体、それを支えるコードも一切含まれない。URLはどちらも同じで、別のページを開く必要はない。アプリ自体のデプロイは `pnpm run deploy` というターミナルコマンドで行う(理由は後述)。
 
@@ -159,8 +159,7 @@ classDiagram
         +string id
         +string title
         +string coverPhotoId
-        +boolean shared
-        +string sharedUrl
+        +boolean hidden
         +string createdAt
         +string updatedAt
     }
