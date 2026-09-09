@@ -25,7 +25,7 @@ const Header = () => {
 					cursor: "pointer",
 				}}
 			>
-				{theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+				{theme === "dark" ? <Moon size={18} /> : <Sun size={18} />}
 			</button>
 		</header>
 	);
