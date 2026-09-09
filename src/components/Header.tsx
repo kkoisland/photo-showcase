@@ -1,3 +1,4 @@
+import { Moon, Sun } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useUIStore } from "../store/uiStore";
 
@@ -24,7 +25,7 @@ const Header = () => {
 					cursor: "pointer",
 				}}
 			>
-				{theme === "light" ? "🌙" : "☀️"}
+				{theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
 			</button>
 		</header>
 	);
