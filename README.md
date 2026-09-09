@@ -14,8 +14,10 @@ Vite + React + TypeScriptで作った、旅行アルバムを周りの人に見�
 **Phase 2: S3公開機能(完了・マージ済み)**
 残作業: ダミーデータを実際の写真に差し替え
 
-**Phase 3: Import時S3同期 + アルバム表示管理(計画中)**
+**Phase 3: Import時S3同期 + アルバム表示管理(実装完了、マージ待ち)**
 ローカルとS3の食い違いをそもそも起こしにくくするための設計変更。「Importした瞬間にS3へアップロードし、Publishはmanifest.jsonの更新だけにする」という方針に転換する。詳細は下記チェックリスト参照
+
+実装中に判明した重要な制約: `AlbumCard.tsx`・`PhotoModal.tsx`・`AlbumImportForm.tsx`は`routes.tsx`経由で閲覧者向けビルド(`App.tsx`/`main.viewer.tsx`)にも含まれる共有コンポーネントで、`import.meta.env.DEV`のJSX条件分岐だけでは、そこからAWS鍵を読み込む`s3Utils.ts`が閲覧者向けビルドに紛れ込むのを防げない(実際に試して、鍵がビルド成果物に埋め込まれることを確認した)。そのため、`s3Utils.ts`の実装をReact Context(`src/adminS3Context.ts`、AWS SDKへの依存なし)経由で注入する方式にした。実際に注入するのは`AdminApp.tsx`(閲覧者ビルドには絶対に含まれない)のみ。Import時のアップロードも、この後の削除API呼び出しも、この仕組みの上に実装する
 
 ### やること一覧
 
@@ -47,16 +49,17 @@ GitHub ActionsによるS3への自動デプロイ、AWS CLIのセットアップ
 
 **アプリ側(Phase 3)**
 
-- [ ] Import時に各写真をその場でS3へアップロードする(`URL.createObjectURL`の`blob:` URLではなく、最初からS3の恒久URLをローカルにも保存する)。既存のhashベース重複チェックはそのまま維持
-- [ ] アップロードに失敗した写真はエラーメッセージを配列に集約し、全件終了後にまとめて表示する。失敗した写真はローカルにも追加しない
-- [ ] 新規アルバム作成時の`coverPhotoId`は、アップロードに成功した写真の中からのみ選ぶ
-- [ ] Import中は「アップロード中...」のローディング表示を出し、フォームを操作不可にする
-- [ ] 写真削除: `ConfirmModal`で確認 → S3の削除APIを呼び出し、成功した場合のみローカルからも削除する。失敗時はローカルの状態を変えずエラーを表示し、再度削除を試せるようにする。既存のUndo(スナックバーの取り消し)は廃止する
-- [ ] アルバム削除: 写真も含めて`DeleteObjectsCommand`でまとめてS3から削除し、成功した場合のみローカルからも削除する。Photo削除と同様に確認ダイアログのみとし、既存のUndoは廃止する
-- [ ] `Album`に`hidden`フィールドを追加する。新規作成時は`hidden: true`をデフォルトにし、一覧からON/OFFできるようにする
-- [ ] Publish時、`hidden`なアルバムとその写真はmanifest.jsonから除外する(S3上の写真ファイル自体は削除しない。表示/非表示は一覧に載せるかどうかだけの制御)
-- [ ] `Album.shared`/`sharedUrl`フィールドを廃止する。`s3Utils.ts`にベースURLの定数を切り出し、`publicUrlFor`(写真用)と`albumUrlFor`(アルバム用、新規)の両方がそれを参照するようにする。`AlbumCard.tsx`・`PhotoGrid.tsx`のリンクコピー部分は、常に同じリンクをコピーするだけの固定表示ボタンに変更する
-- [ ] `publishToS3`のアップロードループは、Import時点で未アップロードのまま残っている写真(=何らかの理由で失敗し続けているもの)だけを対象にする形へ縮小する。オーファンクリーンアップ(`deleteOrphanedPhotos`)はそのまま保険として残す
+- [x] `Album.shared`/`sharedUrl`フィールドを廃止する。ベースURLの定数を`s3Utils.ts`から切り出した`publicUrls.ts`(AWS SDK非依存)に置き、`publicUrlFor`(写真用)と`albumUrlFor`(アルバム用、新規)の両方がそれを参照するようにする。`AlbumCard.tsx`のリンクコピー部分は、常に同じリンクをコピーするだけの固定表示ボタンに変更する。リンクコピーはアルバム一覧ページのみとし、`PhotoGrid.tsx`(アルバム詳細ページ)からは削除する
+- [x] `Album`に`hidden`フィールドを追加する。新規作成時は`hidden: true`をデフォルトにし、アルバムカード上のバッジ(クリックで即トグル、Hidden⇔Show)からON/OFFできるようにする
+- [x] Publish時、`hidden`なアルバムとその写真はmanifest.jsonから除外する(S3上の写真ファイル自体は削除しない。表示/非表示は一覧に載せるかどうかだけの制御)
+- [x] AWS鍵を読み込む`s3Utils.ts`を、閲覧者ビルドにも含まれる共有コンポーネントから隔離するため、React Context(`src/adminS3Context.ts`)経由の依存性注入に変更(上記「実装中に判明した重要な制約」参照)。`albumUtils.importPhotos`は`uploadPhoto`関数を引数で受け取る形にした
+- [x] Import時に各写真をその場でS3へアップロードする(`URL.createObjectURL`の`blob:` URLではなく、最初からS3の恒久URLをローカルにも保存する)。既存のhashベース重複チェックはそのまま維持
+- [x] アップロードに失敗した写真はエラーメッセージを配列に集約し、全件終了後にまとめて表示する(`AdminPublishButton`と同じダイアログ形式)。失敗した写真はローカルにも追加しない
+- [x] 新規アルバム作成時の`coverPhotoId`は、アップロードに成功した写真の中からのみ選ぶ
+- [x] Import中は「アップロード中...」のローディング表示を出し、フォームを操作不可にする
+- [x] 写真削除: `ConfirmModal`で確認 → S3の削除APIを呼び出し、成功した場合のみローカルからも削除する。失敗時はローカルの状態を変えずエラーを表示し、再度削除を試せるようにする。既存のUndo(スナックバーの取り消し)は廃止する。削除APIも`adminS3Context.ts`経由で注入する
+- [x] アルバム削除: 写真も含めて`DeleteObjectsCommand`でまとめてS3から削除し、成功した場合のみローカルからも削除する。Photo削除と同様に確認ダイアログのみとし、既存のUndoは廃止する
+- [x] `publishToS3`のアップロードループは、`keyFromPublicUrl`で既にS3の恒久URLを持っている写真を判別し、そのままmanifestに使う(S3への問い合わせ自体をスキップ)。Import時点で何らかの理由でS3に上がらなかった写真だけ、ここで改めてアップロードを試みる。オーファンクリーンアップ(`deleteOrphanedPhotos`)はそのまま保険として残した
 
 **今後の検討事項**
 

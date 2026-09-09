@@ -31,7 +31,6 @@ export const Default: Story = {
 			createdAt: "",
 			startDate: "",
 			endDate: "",
-			shared: false,
 		},
 	},
 };

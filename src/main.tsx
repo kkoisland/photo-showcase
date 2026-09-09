@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AdminApp from "./AdminApp.tsx";
-import { publicUrlFor } from "./components/s3Utils";
+import { publicUrlFor } from "./components/publicUrls";
 import "./index.css";
 import { seedDummyData } from "./seedDummyData";
 import { useAlbumsStore } from "./store/albumsStore";

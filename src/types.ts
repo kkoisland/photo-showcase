@@ -15,8 +15,7 @@ export interface Album {
 	id: string;
 	title: string;
 	coverPhotoId?: string;
-	shared?: boolean;
-	sharedUrl?: string;
+	hidden?: boolean;
 	updatedAt?: string;
 	createdAt: string;
 	startDate?: string;
@@ -58,4 +57,9 @@ export interface Snack {
 	message: string;
 	actionLabel?: string;
 	onAction?: () => void;
+}
+
+export interface SkippedPhoto {
+	title: string;
+	error: string;
 }

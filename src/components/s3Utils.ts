@@ -7,7 +7,8 @@ import {
 } from "@aws-sdk/client-s3";
 import { useAlbumsStore } from "../store/albumsStore";
 import { usePhotosStore } from "../store/photosStore";
-import type { Album, Photo } from "../types";
+import type { Album, Photo, SkippedPhoto } from "../types";
+import { keyFromPublicUrl, publicUrlFor } from "./publicUrls";
 
 const region = import.meta.env.VITE_AWS_REGION;
 const bucket = import.meta.env.VITE_AWS_S3_BUCKET;
@@ -20,8 +21,7 @@ const s3 = new S3Client({
 	},
 });
 
-export const publicUrlFor = (key: string) =>
-	`http://${bucket}.s3-website-${region}.amazonaws.com/${key}`;
+export { publicUrlFor };
 
 const objectExists = async (key: string): Promise<boolean> => {
 	try {
@@ -47,7 +47,7 @@ const guessContentType = (ext: string) => {
 	return "image/jpeg";
 };
 
-const uploadPhoto = async (
+export const uploadPhoto = async (
 	photo: Photo,
 ): Promise<{ key: string; url: string }> => {
 	const ext = guessExtension(photo);
@@ -68,6 +68,23 @@ const uploadPhoto = async (
 	);
 	return { key, url: publicUrlFor(key) };
 };
+
+export const deletePhotos = async (photos: Photo[]): Promise<void> => {
+	const keys = photos
+		.map((p) => keyFromPublicUrl(p.url))
+		.filter((key): key is string => key !== null);
+	if (keys.length === 0) return;
+
+	await s3.send(
+		new DeleteObjectsCommand({
+			Bucket: bucket,
+			Delete: { Objects: keys.map((Key) => ({ Key })) },
+		}),
+	);
+};
+
+export const deletePhoto = (photo: Photo): Promise<void> =>
+	deletePhotos([photo]);
 
 const deleteOrphanedPhotos = async (
 	currentKeys: Set<string>,
@@ -105,11 +122,6 @@ const uploadManifest = async (manifest: {
 	);
 };
 
-export interface SkippedPhoto {
-	title: string;
-	error: string;
-}
-
 export const publishToS3 = async (): Promise<{
 	photoCount: number;
 	skippedPhotos: SkippedPhoto[];
@@ -122,6 +134,15 @@ export const publishToS3 = async (): Promise<{
 	const currentKeys = new Set<string>();
 	const skippedPhotos: SkippedPhoto[] = [];
 	for (const photo of photos) {
+		// Photos already carry their permanent S3 URL from upload-on-import;
+		// only photos that somehow never made it to S3 need uploading here.
+		const existingKey = keyFromPublicUrl(photo.url);
+		if (existingKey) {
+			photoUrlById.set(photo.id, photo.url);
+			currentKeys.add(existingKey);
+			continue;
+		}
+
 		try {
 			const { key, url } = await uploadPhoto(photo);
 			photoUrlById.set(photo.id, url);
@@ -139,17 +160,25 @@ export const publishToS3 = async (): Promise<{
 		.filter((p) => photoUrlById.has(p.id))
 		.map((p) => ({ ...p, url: photoUrlById.get(p.id) ?? p.url }));
 
-	const uploadedAlbums: Album[] = albums.map((album) => {
+	// Hidden albums keep their photo files on S3 (uploaded above) but are left
+	// out of manifest.json, so they never show up for viewers.
+	const visibleAlbums = albums.filter((a) => !a.hidden);
+	const visibleAlbumIds = new Set(visibleAlbums.map((a) => a.id));
+	const manifestPhotos = uploadedPhotos.filter((p) =>
+		visibleAlbumIds.has(p.albumId),
+	);
+
+	const manifestAlbums: Album[] = visibleAlbums.map((album) => {
 		const coverStillExists =
 			album.coverPhotoId !== undefined && photoUrlById.has(album.coverPhotoId);
-		const fallbackPhoto = uploadedPhotos.find((p) => p.albumId === album.id);
+		const fallbackPhoto = manifestPhotos.find((p) => p.albumId === album.id);
 		return {
 			...album,
 			coverPhotoId: coverStillExists ? album.coverPhotoId : fallbackPhoto?.id,
 		};
 	});
 
-	await uploadManifest({ albums: uploadedAlbums, photos: uploadedPhotos });
+	await uploadManifest({ albums: manifestAlbums, photos: manifestPhotos });
 
 	let deletedCount = 0;
 	try {
@@ -158,5 +187,5 @@ export const publishToS3 = async (): Promise<{
 		console.error("Failed to clean up orphaned photos:", error);
 	}
 
-	return { photoCount: uploadedPhotos.length, skippedPhotos, deletedCount };
+	return { photoCount: manifestPhotos.length, skippedPhotos, deletedCount };
 };

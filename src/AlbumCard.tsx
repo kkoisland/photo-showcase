@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAdminS3 } from "./adminS3Context";
 import AlbumDateEditor from "./components/AlbumDateEditor";
 import AlbumImportForm from "./components/AlbumImportForm";
 import albumUtils from "./components/albumUtils";
 import ConfirmModal from "./components/ConfirmModal";
 import handleCopyToClipboard from "./components/copyToClipboard";
+import { albumUrlFor } from "./components/publicUrls";
 import { useAlbumsStore } from "./store/albumsStore";
 import { usePhotosStore } from "./store/photosStore";
 import { useUIStore } from "./store/uiStore";
@@ -33,6 +35,8 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 	const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
 	const menuRef = useRef<HTMLDivElement | null>(null);
 	const showSnack = useUIStore((s) => s.showSnack);
+	const adminS3 = useAdminS3();
+	const [isDeleting, setIsDeleting] = useState(false);
 
 	useEffect(() => {
 		const handleClickOutside = (e: MouseEvent) => {
@@ -98,31 +102,31 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 				</div>
 				<div className="flex items-center mb-2 relative">
 					<span>{count} files</span>
+					{import.meta.env.DEV && (
+						<button
+							type="button"
+							onClick={(e) => {
+								e.preventDefault();
+								updateAlbum({ ...album, hidden: !album.hidden });
+							}}
+							className="ml-2 text-xs opacity-70 cursor-pointer underline"
+						>
+							{album.hidden ? "Hidden" : "Show"}
+						</button>
+					)}
 					<button
 						type="button"
 						onClick={(e) => {
 							e.preventDefault();
-							const sharedUrl = album.shared
-								? album.sharedUrl
-								: `https://example.com/albums/${album.id}`;
-							if (sharedUrl) handleCopyToClipboard(sharedUrl);
+							handleCopyToClipboard(albumUrlFor(album.id));
 							showSnack({
 								type: "info",
-								message: album.shared
-									? "Link copied to clipboard"
-									: "Album shared and link copied to clipboard",
+								message: "Link copied to clipboard",
 							});
-							if (!album.shared) {
-								updateAlbum({
-									...album,
-									shared: true,
-									sharedUrl,
-								});
-							}
 						}}
 						className="underline ml-2 cursor-pointer link-accent"
 					>
-						{album.shared ? "Shared" : "Not shared"}
+						Copy link
 					</button>
 					{import.meta.env.DEV && (
 						<button
@@ -233,25 +237,29 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 			{import.meta.env.DEV && showRemoveConfirm && (
 				<ConfirmModal
 					title="Delete this album?"
-					confirmLabel="Delete"
+					confirmLabel={isDeleting ? "Deleting..." : "Delete"}
 					cancelLabel="Cancel"
 					danger
-					onConfirm={() => {
-						const removed = albumUtils.deleteAlbumWithPhotos(album.id);
-						showSnack({
-							type: "success",
-							message: "Album deleted: ",
-							actionLabel: "Undo",
-							onAction: () => {
-								if (removed) {
-									albumUtils.restoreAlbumWithPhotos(
-										removed.album,
-										removed.photos,
-									);
-								}
-							},
-						});
-						setContextMenuOpen(false);
+					onConfirm={async () => {
+						if (!adminS3 || isDeleting) return;
+						setIsDeleting(true);
+						try {
+							await albumUtils.deleteAlbumWithPhotos(
+								album.id,
+								adminS3.deletePhotos,
+							);
+							showSnack({ type: "success", message: "Album deleted" });
+							setShowRemoveConfirm(false);
+							setContextMenuOpen(false);
+						} catch (error) {
+							console.error(error);
+							showSnack({
+								type: "error",
+								message: "Failed to delete album. Please try again.",
+							});
+						} finally {
+							setIsDeleting(false);
+						}
 					}}
 					onCancel={() => {
 						setShowRemoveConfirm(false);
