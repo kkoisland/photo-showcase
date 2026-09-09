@@ -114,20 +114,22 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 							{album.hidden ? "Hidden" : "Show"}
 						</button>
 					)}
-					<button
-						type="button"
-						onClick={(e) => {
-							e.preventDefault();
-							handleCopyToClipboard(albumUrlFor(album.id));
-							showSnack({
-								type: "info",
-								message: "Link copied to clipboard",
-							});
-						}}
-						className="underline ml-2 cursor-pointer link-accent"
-					>
-						Copy link
-					</button>
+					{import.meta.env.DEV && (
+						<button
+							type="button"
+							onClick={(e) => {
+								e.preventDefault();
+								handleCopyToClipboard(albumUrlFor(album.id));
+								showSnack({
+									type: "info",
+									message: "Link copied to clipboard",
+								});
+							}}
+							className="underline ml-2 cursor-pointer link-accent"
+						>
+							Copy link
+						</button>
+					)}
 					{import.meta.env.DEV && (
 						<button
 							type="button"
