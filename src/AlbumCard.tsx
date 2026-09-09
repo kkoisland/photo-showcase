@@ -1,3 +1,4 @@
+import { MoreVertical, Pencil } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAdminS3 } from "./adminS3Context";
@@ -96,7 +97,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 							}}
 							className="ml-1 cursor-pointer text-sm"
 						>
-							🖋️
+							<Pencil size={14} />
 						</button>
 					)}
 				</div>
@@ -139,7 +140,7 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 							}}
 							className="ml-2 px-2 cursor-pointer"
 						>
-							⋮
+							<MoreVertical size={16} />
 						</button>
 					)}
 					{import.meta.env.DEV && contextMenuOpen && (

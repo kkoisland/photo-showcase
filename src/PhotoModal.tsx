@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAdminS3 } from "./adminS3Context";
@@ -94,7 +95,7 @@ const PhotoModal = () => {
 					onClick={() => navigate(`/albums/${photo.albumId}`)}
 					className="text-2xl"
 				>
-					✕
+					<X />
 				</button>
 			</div>
 
@@ -103,7 +104,7 @@ const PhotoModal = () => {
 					to={`/photos/${prevPhoto.id}`}
 					className="absolute left-5 text-3xl select-none"
 				>
-					‹
+					<ChevronLeft size={32} />
 				</Link>
 			)}
 
@@ -128,7 +129,7 @@ const PhotoModal = () => {
 					to={`/photos/${nextPhoto.id}`}
 					className="absolute right-5 text-3xl select-none"
 				>
-					›
+					<ChevronRight size={32} />
 				</Link>
 			)}
 			{import.meta.env.DEV && showDeleteConfirm && (
