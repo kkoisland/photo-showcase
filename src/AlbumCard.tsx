@@ -28,10 +28,10 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 			photosInAlbum.find((p) => p.id === album.coverPhotoId) ?? photosInAlbum[0]
 		);
 	});
-	const [newTitle, setNewTitle] = useState(album.title);
 	const [isDateEditorOpen, setIsDateEditorOpen] = useState(false);
 	const [contextMenuOpen, setContextMenuOpen] = useState(false);
-	const [showRenameModal, setShowRenameModal] = useState(false);
+	const [isEditingTitle, setIsEditingTitle] = useState(false);
+	const [titleDraft, setTitleDraft] = useState(album.title);
 	const [showImportMoreModal, setShowImportMoreModal] = useState(false);
 	const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
 	const menuRef = useRef<HTMLDivElement | null>(null);
@@ -78,8 +78,47 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 							/>
 						)}
 					</div>
-					<div className="font-bold w-52 line-clamp-2 mt-2">{album.title}</div>
 				</Link>
+				{import.meta.env.DEV && isEditingTitle ? (
+					<textarea
+						// biome-ignore lint: autoFocus is intentional for inline editing
+						autoFocus
+						rows={2}
+						value={titleDraft}
+						onChange={(e) => setTitleDraft(e.target.value)}
+						onBlur={() => {
+							const trimmed = titleDraft.trim();
+							if (trimmed && trimmed !== album.title) {
+								updateAlbum({ ...album, title: trimmed });
+							}
+							setIsEditingTitle(false);
+						}}
+						onKeyDown={(e) => {
+							if (e.nativeEvent.isComposing) return;
+							if (e.key === "Enter" && !e.shiftKey) {
+								e.preventDefault();
+								e.currentTarget.blur();
+							} else if (e.key === "Escape") {
+								setTitleDraft(album.title);
+								setIsEditingTitle(false);
+							}
+						}}
+						className="font-bold w-52 mt-2 border rounded px-1 resize-none"
+					/>
+				) : import.meta.env.DEV ? (
+					<button
+						type="button"
+						className="font-bold w-52 line-clamp-2 mt-2 text-left cursor-pointer"
+						onClick={() => {
+							setTitleDraft(album.title);
+							setIsEditingTitle(true);
+						}}
+					>
+						{album.title}
+					</button>
+				) : (
+					<div className="font-bold w-52 line-clamp-2 mt-2">{album.title}</div>
+				)}
 				<div className="flex items-center opacity-80">
 					<span className="truncate overflow-hidden whitespace-nowrap">
 						{album.startDate && album.endDate
@@ -148,16 +187,6 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 							ref={menuRef}
 							className="absolute top-full right-0 context-menu"
 						>
-							<button
-								type="button"
-								style={{ padding: "4px 12px", cursor: "pointer" }}
-								onClick={() => {
-									setContextMenuOpen(false);
-									setShowRenameModal(true);
-								}}
-							>
-								Rename album
-							</button>
 							<div>
 								<button
 									type="button"
@@ -197,27 +226,6 @@ const AlbumCard = ({ album }: AlbumCardProps) => {
 				<AlbumDateEditor
 					album={album}
 					onClose={() => setIsDateEditorOpen(false)}
-				/>
-			)}
-			{import.meta.env.DEV && showRenameModal && (
-				<ConfirmModal
-					title="Rename album"
-					confirmLabel="Save"
-					cancelLabel="Cancel"
-					onConfirm={() => {
-						updateAlbum({ ...album, title: newTitle });
-						setShowRenameModal(false);
-						setContextMenuOpen(false);
-					}}
-					onCancel={() => setShowRenameModal(false)}
-					description={
-						<input
-							type="text"
-							value={newTitle}
-							onChange={(e) => setNewTitle(e.target.value)}
-							className="border rounded px-2 py-1 w-full"
-						/>
-					}
 				/>
 			)}
 			{import.meta.env.DEV && showImportMoreModal && (
