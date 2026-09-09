@@ -16,10 +16,14 @@ const AdminApp = () => {
 
 	return (
 		<AdminS3Context.Provider value={{ uploadPhoto, deletePhoto, deletePhotos }}>
-			<Header />
-			<AdminPublishButton />
-			<AppRoutes />
-			<Footer />
+			<div className="min-h-screen flex flex-col">
+				<Header />
+				<AdminPublishButton />
+				<div className="flex-1 flex flex-col">
+					<AppRoutes />
+				</div>
+				<Footer />
+			</div>
 		</AdminS3Context.Provider>
 	);
 };

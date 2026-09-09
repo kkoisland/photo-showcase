@@ -11,7 +11,7 @@ const AlbumGrid = () => {
 	const [showDialog, setShowDialog] = useState(false);
 	const newAlbumId = uuid();
 	return (
-		<div className="min-h-screen p-5">
+		<div className="p-5">
 			<div className="flex items-center mb-4">
 				<h1 className="text-2xl font-bold">Albums</h1>
 				{import.meta.env.DEV && (

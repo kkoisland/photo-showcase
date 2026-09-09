@@ -74,7 +74,7 @@ const PhotoModal = () => {
 	};
 
 	return (
-		<div className="fixed inset-0 flex items-center justify-center modal-overlay">
+		<div className="relative flex-1 flex items-center justify-center modal-overlay">
 			<div className="absolute top-5 right-5 flex items-center gap-4">
 				{import.meta.env.DEV && (
 					<>
@@ -112,7 +112,7 @@ const PhotoModal = () => {
 				<img
 					src={photo.url}
 					alt={photo.title}
-					className="max-w-[95vw] max-h-[95vh] object-contain rounded-lg"
+					className="w-full h-full object-contain rounded-lg"
 				/>
 			)}
 			{photo.type === "video" && (
@@ -120,7 +120,7 @@ const PhotoModal = () => {
 					controls
 					muted
 					src={photo.url}
-					className="max-w-[95vw] max-h-[95vh] object-contain rounded-lg"
+					className="w-full h-full object-contain rounded-lg"
 				/>
 			)}
 

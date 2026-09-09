@@ -12,11 +12,13 @@ const App = () => {
 	}, [theme]);
 
 	return (
-		<>
+		<div className="min-h-screen flex flex-col">
 			<Header />
-			<AppRoutes />
+			<div className="flex-1 flex flex-col">
+				<AppRoutes />
+			</div>
 			<Footer />
-		</>
+		</div>
 	);
 };
 export default App;
