@@ -13,10 +13,13 @@ const PhotoModal = () => {
 	const allPhotos = usePhotosStore((s) => s.photos);
 	const navigate = useNavigate();
 	const removePhoto = usePhotosStore((s) => s.removePhoto);
+	const updatePhoto = usePhotosStore((s) => s.updatePhoto);
 	const showSnack = useUIStore((s) => s.showSnack);
 	const adminS3 = useAdminS3();
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
+	const [isEditingDescription, setIsEditingDescription] = useState(false);
+	const [descriptionDraft, setDescriptionDraft] = useState("");
 
 	// Sort date ascending
 	const sortedPhotos = [...allPhotos].sort((a, b) =>
@@ -60,6 +63,14 @@ const PhotoModal = () => {
 		} finally {
 			setIsDeleting(false);
 		}
+	};
+
+	const handleSaveDescription = () => {
+		const trimmed = descriptionDraft.trim();
+		if (trimmed !== (photo.description ?? "")) {
+			updatePhoto({ ...photo, description: trimmed || undefined });
+		}
+		setIsEditingDescription(false);
 	};
 
 	const handleSetCoverPhoto = () => {
@@ -122,6 +133,39 @@ const PhotoModal = () => {
 					src={photo.url}
 					className="w-full h-full object-contain rounded-lg"
 				/>
+			)}
+
+			{import.meta.env.DEV && isEditingDescription ? (
+				<textarea
+					// biome-ignore lint: autoFocus is intentional for inline editing
+					autoFocus
+					rows={2}
+					value={descriptionDraft}
+					onChange={(e) => setDescriptionDraft(e.target.value)}
+					onBlur={handleSaveDescription}
+					onKeyDown={(e) => {
+						if (e.key === "Escape") setIsEditingDescription(false);
+					}}
+					placeholder="Add a description"
+					className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-sm px-3 py-2 resize-none border-0 text-center"
+				/>
+			) : import.meta.env.DEV ? (
+				<button
+					type="button"
+					onClick={() => {
+						setDescriptionDraft(photo.description ?? "");
+						setIsEditingDescription(true);
+					}}
+					className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-sm px-3 py-2 text-center line-clamp-2"
+				>
+					{photo.description || "Add a description"}
+				</button>
+			) : (
+				photo.description && (
+					<div className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-sm px-3 py-2 line-clamp-2 text-center">
+						{photo.description}
+					</div>
+				)
 			)}
 
 			{nextPhoto && (
