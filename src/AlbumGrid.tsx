@@ -8,20 +8,43 @@ import { useAlbumsStore } from "./store/albumsStore";
 
 const AlbumGrid = () => {
 	const albums = useAlbumsStore((s) => s.albums);
+	const addAlbum = useAlbumsStore((s) => s.addAlbum);
 	const [showDialog, setShowDialog] = useState(false);
 	const newAlbumId = uuid();
+	const sortedAlbums = [...albums].sort((a, b) =>
+		a.createdAt < b.createdAt ? 1 : -1,
+	);
+
+	const handleCreateEmptyAlbum = () => {
+		const now = new Date().toISOString();
+		addAlbum({
+			id: uuid(),
+			title: "no title",
+			hidden: true,
+			createdAt: now,
+			updatedAt: now,
+		});
+	};
+
 	return (
 		<div className="p-5">
 			<div className="flex items-center mb-4">
 				<h1 className="text-2xl font-bold">Albums</h1>
 				{import.meta.env.DEV && (
-					<div className="ml-2">
+					<div className="ml-2 flex gap-2">
 						<button
 							type="button"
 							onClick={() => setShowDialog(true)}
 							className="px-3 py-1 rounded"
 						>
 							Import new album
+						</button>
+						<button
+							type="button"
+							onClick={handleCreateEmptyAlbum}
+							className="px-3 py-1 rounded"
+						>
+							New empty album
 						</button>
 					</div>
 				)}
@@ -34,7 +57,7 @@ const AlbumGrid = () => {
 					gridTemplateColumns: "repeat(auto-fill, minmax(221px, auto))",
 				}}
 			>
-				{albums.map((a) => (
+				{sortedAlbums.map((a) => (
 					<AlbumCard album={a} key={a.id} />
 				))}
 			</div>
