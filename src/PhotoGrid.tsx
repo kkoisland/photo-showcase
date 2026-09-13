@@ -33,7 +33,7 @@ const PhotoGrid = () => {
 				columnClassName="my-masonry-grid_column"
 			>
 				{photos.map((p) => (
-					<Link key={p.id} to={`/photos/${p.id}`}>
+					<Link key={p.id} to={`/photos/${p.id}`} className="relative block">
 						{p.type === "video" && p.title.toLowerCase().endsWith(".mov") ? (
 							<div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded">
 								<span className="text-gray-500">
@@ -44,6 +44,11 @@ const PhotoGrid = () => {
 							<video src={p.url} muted playsInline className="w-full rounded" />
 						) : (
 							<img src={p.url} alt={p.title} className="w-full rounded" />
+						)}
+						{p.description && (
+							<div className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-xs px-2 py-1 rounded-b line-clamp-1 text-center">
+								{p.description}
+							</div>
 						)}
 					</Link>
 				))}
