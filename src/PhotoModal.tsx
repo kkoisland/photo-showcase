@@ -1,8 +1,9 @@
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pencil, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAdminS3 } from "./adminS3Context";
 import ConfirmModal from "./components/ConfirmModal";
+import PhotoDateEditor from "./components/PhotoDateEditor";
 import SnackBar from "./components/SnackBar";
 import { useAlbumsStore } from "./store/albumsStore";
 import { usePhotosStore } from "./store/photosStore";
@@ -18,6 +19,7 @@ const PhotoModal = () => {
 	const adminS3 = useAdminS3();
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
+	const [isDateEditorOpen, setIsDateEditorOpen] = useState(false);
 	const [isEditingDescription, setIsEditingDescription] = useState(false);
 	const [descriptionDraft, setDescriptionDraft] = useState("");
 
@@ -99,6 +101,13 @@ const PhotoModal = () => {
 								Set as album cover
 							</button>
 						</span>
+						<button
+							type="button"
+							onClick={() => setIsDateEditorOpen(true)}
+							className="cursor-pointer"
+						>
+							<Pencil size={16} />
+						</button>
 					</>
 				)}
 				<button
@@ -175,6 +184,12 @@ const PhotoModal = () => {
 				>
 					<ChevronRight size={32} />
 				</Link>
+			)}
+			{import.meta.env.DEV && isDateEditorOpen && (
+				<PhotoDateEditor
+					photo={photo}
+					onClose={() => setIsDateEditorOpen(false)}
+				/>
 			)}
 			{import.meta.env.DEV && showDeleteConfirm && (
 				<ConfirmModal
