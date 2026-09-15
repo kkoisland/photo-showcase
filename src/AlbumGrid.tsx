@@ -11,9 +11,6 @@ const AlbumGrid = () => {
 	const addAlbum = useAlbumsStore((s) => s.addAlbum);
 	const [showDialog, setShowDialog] = useState(false);
 	const newAlbumId = uuid();
-	const sortedAlbums = [...albums].sort((a, b) =>
-		a.createdAt < b.createdAt ? 1 : -1,
-	);
 
 	const handleCreateEmptyAlbum = () => {
 		const now = new Date().toISOString();
@@ -57,7 +54,7 @@ const AlbumGrid = () => {
 					gridTemplateColumns: "repeat(auto-fill, minmax(221px, auto))",
 				}}
 			>
-				{sortedAlbums.map((a) => (
+				{albums.map((a) => (
 					<AlbumCard album={a} key={a.id} />
 				))}
 			</div>

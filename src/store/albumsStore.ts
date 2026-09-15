@@ -16,7 +16,7 @@ export const useAlbumsStore = create<AlbumsState>()(
 		(set) => ({
 			albums: [],
 			setAlbums: (albums) => set({ albums }),
-			addAlbum: (album) => set((s) => ({ albums: [...s.albums, album] })),
+			addAlbum: (album) => set((s) => ({ albums: [album, ...s.albums] })),
 			updateAlbum: (album) =>
 				set((s) => ({
 					albums: s.albums.map((a) =>
